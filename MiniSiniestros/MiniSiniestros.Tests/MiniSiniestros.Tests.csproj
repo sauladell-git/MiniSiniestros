@@ -26,6 +26,7 @@
     <ProjectReference Include="..\MiniSiniestros.Common\MiniSiniestros.Common.csproj" />
     <ProjectReference Include="..\MiniSiniestros.Data\MiniSiniestros.Data.csproj" />
     <ProjectReference Include="..\MiniSiniestros.Models\MiniSiniestros.Entities.csproj" />
+    <ProjectReference Include="..\MiniSiniestros.Api\MiniSiniestros.Api.csproj" />
   </ItemGroup>
 
 </Project>
