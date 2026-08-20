@@ -6,7 +6,7 @@ using MiniSiniestros.Data.Repositories.Interfaces;
 
 namespace MiniSiniestros.Data.UnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UoWData : IUoWData
     {
         private readonly MiniSiniestrosDbContext _context;
         private readonly ConcurrentDictionary<Type, object> _repositories;
@@ -22,7 +22,7 @@ namespace MiniSiniestros.Data.UnitOfWork
         private ITrabajadorRepository? _trabajadores;
         private IUsuarioRepository? _usuarios;
 
-        public UnitOfWork(MiniSiniestrosDbContext context)
+        public UoWData(MiniSiniestrosDbContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _repositories = new ConcurrentDictionary<Type, object>();

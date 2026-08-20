@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MiniSiniestros.Common.Constants;
 using MiniSiniestros.Data.Context;
 using MiniSiniestros.Entities;
 
@@ -17,11 +18,11 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             // 3. Seed SiniestroEstados (Recibido, EnAnalisis, Aprobado, Rechazado, Cerrado)
             var estados = new List<SiniestroEstado>
             {
-                new() { Nombre = "Recibido" },
-                new() { Nombre = "EnAnalisis" },
-                new() { Nombre = "Aprobado" },
-                new() { Nombre = "Rechazado" },
-                new() { Nombre = "Cerrado" }
+                new() { Nombre = SiniestroEstadoConstants.Recibido },
+                new() { Nombre = SiniestroEstadoConstants.EnAnalisis },
+                new() { Nombre = SiniestroEstadoConstants.Aprobado },
+                new() { Nombre = SiniestroEstadoConstants.Rechazado },
+                new() { Nombre = SiniestroEstadoConstants.Cerrado }
             };
 
             await context.SiniestroEstados.AddRangeAsync(estados);
@@ -148,17 +149,17 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             await context.SaveChangesAsync();
 
             // 8. Seed Siniestros
-            var estadoRecibido = await context.SiniestroEstados.FirstAsync(e => e.Nombre == "Recibido");
-            var estadoEnAnalisis = await context.SiniestroEstados.FirstAsync(e => e.Nombre == "EnAnalisis");
-            var estadoAprobado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == "Aprobado");
-            var estadoRechazado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == "Rechazado");
-            var estadoCerrado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == "Cerrado");
+            var estadoRecibido = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.Recibido);
+            var estadoEnAnalisis = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.EnAnalisis);
+            var estadoAprobado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.Aprobado);
+            var estadoRechazado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.Rechazado);
+            var estadoCerrado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.Cerrado);
 
-            var trabajadorCharly = await context.Trabajadores.FirstAsync(t => t.Cuil == "20-11111111-1");
-            var trabajadorCerati = await context.Trabajadores.FirstAsync(t => t.Cuil == "20-22222222-2");
-            var trabajadorSolari = await context.Trabajadores.FirstAsync(t => t.Cuil == "20-33333333-3");
-            var trabajadorAstor = await context.Trabajadores.FirstAsync(t => t.Cuil == "20-44444444-4");
-            var trabajadorSpinetta = await context.Trabajadores.FirstAsync(t => t.Cuil == "20-55555555-5");
+            var trabajadorCharly = await context.Trabajadores.FirstAsync(t => t.Cuil == "20111111111");
+            var trabajadorCerati = await context.Trabajadores.FirstAsync(t => t.Cuil == "20222222222");
+            var trabajadorSolari = await context.Trabajadores.FirstAsync(t => t.Cuil == "20333333333");
+            var trabajadorAstor = await context.Trabajadores.FirstAsync(t => t.Cuil == "20444444444");
+            var trabajadorSpinetta = await context.Trabajadores.FirstAsync(t => t.Cuil == "20555555555");
 
             var siniestros = new List<Siniestro>
             {
@@ -166,6 +167,7 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     Numero = 1001,
                     Fecha = DateTime.UtcNow.AddDays(-15),
+                    Observaciones = "Incidente reportado en planta industrial durante jornada laboral.",
                     EmpleadorId = empresaA.Id,
                     TrabajadorId = trabajadorCharly.Id,
                     SiniestroEstadoId = estadoRecibido.Id
@@ -174,6 +176,7 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     Numero = 1002,
                     Fecha = DateTime.UtcNow.AddDays(-10),
+                    Observaciones = "Revisión médica y peritaje en proceso por caída en oficina.",
                     EmpleadorId = empresaB.Id,
                     TrabajadorId = trabajadorCerati.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id
@@ -182,6 +185,7 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     Numero = 1003,
                     Fecha = DateTime.UtcNow.AddDays(-30),
+                    Observaciones = "Tratamiento finalizado, alta médica otorgada y siniestro aprobado.",
                     EmpleadorId = empresaC.Id,
                     TrabajadorId = trabajadorSolari.Id,
                     SiniestroEstadoId = estadoAprobado.Id
@@ -190,6 +194,7 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     Numero = 1004,
                     Fecha = DateTime.UtcNow.AddDays(-60),
+                    Observaciones = "Rechazado debido a inconsistencias en la documentación respaldatoria.",
                     EmpleadorId = empresaD.Id,
                     TrabajadorId = trabajadorAstor.Id,
                     SiniestroEstadoId = estadoRechazado.Id
@@ -198,6 +203,7 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     Numero = 1005,
                     Fecha = DateTime.UtcNow.AddDays(-90),
+                    Observaciones = "Expediente cerrado tras cumplimiento de todas las prestaciones acordadas.",
                     EmpleadorId = empresaE.Id,
                     TrabajadorId = trabajadorSpinetta.Id,
                     SiniestroEstadoId = estadoCerrado.Id
@@ -233,9 +239,6 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             await context.SaveChangesAsync();
 
             // 10. Seed SiniestroEstadoHistorial
-            var usuarioJuan = await context.Usuarios.FirstAsync(u => u.Nombre == "Juan");
-            var usuarioMaria = await context.Usuarios.FirstAsync(u => u.Nombre == "María");
-
             var historiales = new List<SiniestroEstadoHistorial>
             {
                 // Historial Siniestro 1001
@@ -243,7 +246,6 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1001.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    UsuarioId = usuarioJuan.Id,
                     Fecha = siniestro1001.Fecha
                 },
 
@@ -252,14 +254,12 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1002.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    UsuarioId = usuarioJuan.Id,
                     Fecha = siniestro1002.Fecha.AddDays(-2)
                 },
                 new()
                 {
                     SiniestroId = siniestro1002.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id,
-                    UsuarioId = usuarioMaria.Id,
                     Fecha = siniestro1002.Fecha
                 },
 
@@ -268,21 +268,18 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1003.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    UsuarioId = usuarioJuan.Id,
                     Fecha = siniestro1003.Fecha.AddDays(-10)
                 },
                 new()
                 {
                     SiniestroId = siniestro1003.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id,
-                    UsuarioId = usuarioMaria.Id,
                     Fecha = siniestro1003.Fecha.AddDays(-5)
                 },
                 new()
                 {
                     SiniestroId = siniestro1003.Id,
                     SiniestroEstadoId = estadoAprobado.Id,
-                    UsuarioId = usuarioJuan.Id,
                     Fecha = siniestro1003.Fecha
                 },
 
@@ -291,21 +288,18 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1004.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    UsuarioId = usuarioJuan.Id,
                     Fecha = siniestro1004.Fecha.AddDays(-10)
                 },
                 new()
                 {
                     SiniestroId = siniestro1004.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id,
-                    UsuarioId = usuarioMaria.Id,
                     Fecha = siniestro1004.Fecha.AddDays(-5)
                 },
                 new()
                 {
                     SiniestroId = siniestro1004.Id,
                     SiniestroEstadoId = estadoRechazado.Id,
-                    UsuarioId = usuarioMaria.Id,
                     Fecha = siniestro1004.Fecha
                 },
 
@@ -314,28 +308,24 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1005.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    UsuarioId = usuarioJuan.Id,
                     Fecha = siniestro1005.Fecha.AddDays(-30)
                 },
                 new()
                 {
                     SiniestroId = siniestro1005.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id,
-                    UsuarioId = usuarioMaria.Id,
                     Fecha = siniestro1005.Fecha.AddDays(-20)
                 },
                 new()
                 {
                     SiniestroId = siniestro1005.Id,
                     SiniestroEstadoId = estadoAprobado.Id,
-                    UsuarioId = usuarioMaria.Id,
                     Fecha = siniestro1005.Fecha.AddDays(-10)
                 },
                 new()
                 {
                     SiniestroId = siniestro1005.Id,
                     SiniestroEstadoId = estadoCerrado.Id,
-                    UsuarioId = usuarioJuan.Id,
                     Fecha = siniestro1005.Fecha
                 }
             };

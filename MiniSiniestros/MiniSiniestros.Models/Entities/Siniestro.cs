@@ -5,6 +5,7 @@ namespace MiniSiniestros.Entities
         public int Id { get; set; }
         public int Numero { get; set; }
         public DateTime Fecha { get; set; }
+        public string Observaciones { get; set; } = string.Empty;
         public int EmpleadorId { get; set; }
         public Empleador Empleador { get; set; } = null!;
         public int TrabajadorId { get; set; }

@@ -18,6 +18,9 @@ namespace MiniSiniestros.Data.Configurations
             builder.Property(s => s.Fecha)
                 .IsRequired();
 
+            builder.Property(s => s.Observaciones)
+                .HasMaxLength(500);
+
             builder.HasOne(s => s.Empleador)
                 .WithMany()
                 .HasForeignKey(s => s.EmpleadorId)

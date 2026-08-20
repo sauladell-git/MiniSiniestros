@@ -3,7 +3,7 @@ using MiniSiniestros.Data.Repositories.Interfaces;
 
 namespace MiniSiniestros.Data.UnitOfWork
 {
-    public interface IUnitOfWork : IDisposable, IAsyncDisposable
+    public interface IUoWData : IDisposable, IAsyncDisposable
     {
         IEmpleadorRepository Empleadores { get; }
         IPrestadorRepository Prestadores { get; }

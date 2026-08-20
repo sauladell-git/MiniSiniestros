@@ -32,7 +32,7 @@ namespace MiniSiniestros.Data.Extensions
             services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
             // registrar el UnitofWork!
-            services.AddScoped<IUnitOfWork, UnitOfWork.UnitOfWork>();
+            services.AddScoped<IUoWData, UnitOfWork.UoWData>();
 
             return services;
         }

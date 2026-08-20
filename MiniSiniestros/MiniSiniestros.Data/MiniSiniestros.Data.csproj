@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MiniSiniestros.Common\MiniSiniestros.Common.csproj" />
+    <ProjectReference Include="..\MiniSiniestros.Dto\MiniSiniestros.Dto.csproj" />
     <ProjectReference Include="..\MiniSiniestros.Models\MiniSiniestros.Entities.csproj" />
   </ItemGroup>
 

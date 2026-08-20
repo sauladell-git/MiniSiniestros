@@ -1,3 +1,4 @@
+using MiniSiniestros.Dto.Siniestro;
 using MiniSiniestros.Entities;
 
 namespace MiniSiniestros.Data.Repositories.Interfaces
@@ -9,5 +10,7 @@ namespace MiniSiniestros.Data.Repositories.Interfaces
         Task<IReadOnlyList<Siniestro>> GetPorEmpleadorAsync(int empleadorId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Siniestro>> GetPorTrabajadorAsync(int trabajadorId, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<Siniestro>> GetPorEstadoAsync(int estadoId, CancellationToken cancellationToken = default);
+        Task<int> GetUltimoNumeroAsync(CancellationToken cancellationToken = default);
+        Task<(IReadOnlyList<Siniestro> Items, int TotalCount)> GetPagedAsync(SiniestroFilterRequest filter, CancellationToken cancellationToken = default);
     }
 }
