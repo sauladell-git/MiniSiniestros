@@ -54,32 +54,32 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 new()
                 {
                     RazonSocial = "Empresa A S.A.",
-                    Cuit = "30-11111111-1"
+                    Cuit = "30111111111"
                 },
                 new()
                 {
                     RazonSocial = "Empresa B S.A.",
-                    Cuit = "30-22222222-2"
+                    Cuit = "30222222222"
                 },
                 new()
                 {
                     RazonSocial = "Empresa C S.A.",
-                    Cuit = "30-33333333-3"
+                    Cuit = "30333333333"
                 },
                 new()
                 {
                     RazonSocial = "Empresa D S.A.",
-                    Cuit = "30-44444444-4"
+                    Cuit = "30444444444"
                 },
                 new()
                 {
                     RazonSocial = "Empresa E S.A.",
-                    Cuit = "30-55555555-5"
+                    Cuit = "30555555555"
                 },
                 new()
                 {
                     RazonSocial = "Empresa F S.A.",
-                    Cuit = "30-66666666-6"
+                    Cuit = "30666666666"
                 }
             };
 
@@ -100,11 +100,11 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             await context.SaveChangesAsync();
 
             // 7. Seed Trabajadores
-            var empresaA = await context.Empleadores.FirstAsync(e => e.Cuit == "30-11111111-1");
-            var empresaB = await context.Empleadores.FirstAsync(e => e.Cuit == "30-22222222-2");
-            var empresaC = await context.Empleadores.FirstAsync(e => e.Cuit == "30-33333333-3");
-            var empresaD = await context.Empleadores.FirstAsync(e => e.Cuit == "30-44444444-4");
-            var empresaE = await context.Empleadores.FirstAsync(e => e.Cuit == "30-55555555-5");
+            var empresaA = await context.Empleadores.FirstAsync(e => e.Cuit == "30111111111");
+            var empresaB = await context.Empleadores.FirstAsync(e => e.Cuit == "30222222222");
+            var empresaC = await context.Empleadores.FirstAsync(e => e.Cuit == "30333333333");
+            var empresaD = await context.Empleadores.FirstAsync(e => e.Cuit == "30444444444");
+            var empresaE = await context.Empleadores.FirstAsync(e => e.Cuit == "30555555555");
 
             var trabajadores = new List<Trabajador>
             {
@@ -112,35 +112,35 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     Nombre = "Charly",
                     Apellido = "García",
-                    Cuil = "20-11111111-1",
+                    Cuil = "20111111111",
                     EmpleadorId = empresaA.Id
                 },
                 new()
                 {
                     Nombre = "Gustavo",
                     Apellido = "Cerati",
-                    Cuil = "20-22222222-2",
+                    Cuil = "20222222222",
                     EmpleadorId = empresaB.Id
                 },
                 new()
                 {
                     Nombre = "Carlos",
                     Apellido = "Solari",
-                    Cuil = "20-33333333-3",
+                    Cuil = "20333333333",
                     EmpleadorId = empresaC.Id
                 },
                 new()
                 {
                     Nombre = "Astor",
                     Apellido = "Piazzolla",
-                    Cuil = "20-44444444-4",
+                    Cuil = "20444444444",
                     EmpleadorId = empresaD.Id
                 },
                 new()
                 {
                     Nombre = "Luis Alberto",
                     Apellido = "Spinetta",
-                    Cuil = "20-55555555-5",
+                    Cuil = "20555555555",
                     EmpleadorId = empresaE.Id
                 }
             };
