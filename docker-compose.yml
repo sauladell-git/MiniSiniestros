@@ -9,8 +9,6 @@ services:
       MSSQL_PID: "Developer"
     ports:
       - "1433:1433"
-    volumes:
-      - mssql_data:/var/opt/mssql
     networks:
       - minisiniestros-net
     healthcheck:
@@ -29,7 +27,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - ConnectionStrings__DefaultConnection=Server=minisiniestros-sql,1433;Database=MiniSiniestrosDb;User Id=sa;Password=MiniSiniestros*2026!;TrustServerCertificate=True;
+      - ConnectionStrings__DefaultConnection=Server=minisiniestros-sql,1433;Database=MiniSiniestros;User Id=sa;Password=MiniSiniestros*2026!;TrustServerCertificate=True;
     ports:
       - "8080:8080"
     depends_on:
@@ -55,10 +53,6 @@ services:
       - api
     networks:
       - minisiniestros-net
-
-volumes:
-  mssql_data:
-    driver: local
 
 networks:
   minisiniestros-net:
