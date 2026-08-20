@@ -1,3 +1,4 @@
+using MiniSiniestros.Api.Handlers;
 using MiniSiniestros.Data.Context;
 using MiniSiniestros.Data.Extensions;
 using MiniSiniestros.Data.Migrations.Seeds;
@@ -12,10 +13,14 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Services(services)
     .Enrich.FromLogContext());
 
+// Register Global Exception Handler (.NET 8 IExceptionHandler)
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Configure EF Core Data Services (DbContext, Repositories, UnitOfWork)
+// Configuracion EF Core Data Services (DbContext, Repositories, UnitOfWork)
 builder.Services.AddDataServices(builder.Configuration);
 
 // Configure Business Services Layer
@@ -27,7 +32,10 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Enable Serilog HTTP Request Logging
+// Enable Global Exception 
+app.UseExceptionHandler();
+
+// Enable Serilog HTTP
 app.UseSerilogRequestLogging();
 
 // Automatically apply pending database migrations and seed data on startup
