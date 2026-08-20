@@ -1,0 +1,65 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: minisiniestros-sql
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "MiniSiniestros*2026!"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    networks:
+      - minisiniestros-net
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'MiniSiniestros*2026!' -C -Q 'SELECT 1' || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'MiniSiniestros*2026!' -Q 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  api:
+    build:
+      context: .
+      dockerfile: MiniSiniestros.Api/Dockerfile
+    container_name: minisiniestros-api
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ConnectionStrings__DefaultConnection=Server=minisiniestros-sql,1433;Database=MiniSiniestrosDb;User Id=sa;Password=MiniSiniestros*2026!;TrustServerCertificate=True;
+    ports:
+      - "8080:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - minisiniestros-net
+
+  webapp:
+    build:
+      context: .
+      dockerfile: MiniSiniestros.Web/Dockerfile
+    container_name: minisiniestros-webapp
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ApiSettings__BaseUrl=http://minisiniestros-api:8080/
+      - ApiSettings__PublicUrl=http://localhost:8080/
+    ports:
+      - "8081:8080"
+    depends_on:
+      - api
+    networks:
+      - minisiniestros-net
+
+volumes:
+  mssql_data:
+    driver: local
+
+networks:
+  minisiniestros-net:
+    driver: bridge
