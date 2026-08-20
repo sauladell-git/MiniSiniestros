@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MiniSiniestros.Common.Constants;
@@ -13,6 +14,8 @@ namespace MiniSiniestros.Services.Implementations
 {
     public class SiniestroService : ISiniestroService
     {
+        private static readonly Regex CuitCuilRegex = new(@"^\d{11}$", RegexOptions.Compiled);
+
         private readonly IUoWData _unitOfWork;
         private readonly IMapper _mapper;
         private readonly ILogger<SiniestroService> _logger;
@@ -103,19 +106,19 @@ namespace MiniSiniestros.Services.Implementations
         {
             _logger.LogInformation("Iniciando solicitud de creación de nuevo siniestro.");
 
-            // Validar formato CUIT Empleador (no vacío y exactamente 11 dígitos)
+            // Validar formato CUIT Empleador con Expresión Regular (exclusivamente 11 dígitos numéricos sin guiones)
             var cuitClean = dto.CuilEmpleador?.Trim() ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(cuitClean) || cuitClean.Length != 11 || !cuitClean.All(char.IsDigit))
+            if (string.IsNullOrWhiteSpace(cuitClean) || !CuitCuilRegex.IsMatch(cuitClean))
             {
-                _logger.LogWarning("Validación fallida: CUIT de empleador es inválido '{Cuit}'. Debe tener 11 dígitos.", dto.CuilEmpleador);
+                _logger.LogWarning("Validación fallida: CUIT de empleador es inválido '{Cuit}'. Debe ser un texto numérico de 11 dígitos sin guiones.", dto.CuilEmpleador);
                 return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.CuitInvalido);
             }
 
-            // Validar formato CUIL Trabajador (no vacío y exactamente 11 dígitos)
+            // Validar formato CUIL Trabajador con Expresión Regular (exclusivamente 11 dígitos numéricos sin guiones)
             var cuilClean = dto.CuilTrabajador?.Trim() ?? string.Empty;
-            if (string.IsNullOrWhiteSpace(cuilClean) || cuilClean.Length != 11 || !cuilClean.All(char.IsDigit))
+            if (string.IsNullOrWhiteSpace(cuilClean) || !CuitCuilRegex.IsMatch(cuilClean))
             {
-                _logger.LogWarning("Validación fallida: CUIL de trabajador es inválido '{Cuil}'. Debe tener 11 dígitos.", dto.CuilTrabajador);
+                _logger.LogWarning("Validación fallida: CUIL de trabajador es inválido '{Cuil}'. Debe ser un texto numérico de 11 dígitos sin guiones.", dto.CuilTrabajador);
                 return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.CuilInvalido);
             }
 

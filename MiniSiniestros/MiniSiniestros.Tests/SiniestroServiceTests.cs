@@ -69,13 +69,19 @@ namespace MiniSiniestros.Tests
                 _prestadorServiceMock.Object);
         }
 
-        [Fact]
-        public async Task CreateAsync_ConCuitInvalido_DevuelveCuitInvalidoError()
+        [Theory]
+        [InlineData("12345")]           // Menos de 11 dígitos
+        [InlineData("30-11111111-1")]   // Con guiones (no permitido)
+        [InlineData("3011111111A")]     // Con letras
+        [InlineData("301111111111")]    // Más de 11 dígitos
+        [InlineData("")]                // Vacío
+        [InlineData("           ")]     // Espacios
+        public async Task CreateAsync_ConCuitInvalidoRegex_DevuelveCuitInvalidoError(string cuitInvalido)
         {
             // Arrange
             var dto = new CreateSiniestroDto
             {
-                CuilEmpleador = "12345", // Menos de 11 dígitos
+                CuilEmpleador = cuitInvalido,
                 CuilTrabajador = "20111111111",
                 SiniestroEstadoId = 1
             };
@@ -89,14 +95,20 @@ namespace MiniSiniestros.Tests
             result.Errors.First().Code.Should().Be(SiniestroErrorConstants.CuitInvalido.Code);
         }
 
-        [Fact]
-        public async Task CreateAsync_ConCuilInvalido_DevuelveCuilInvalidoError()
+        [Theory]
+        [InlineData("12345")]           // Menos de 11 dígitos
+        [InlineData("20-11111111-1")]   // Con guiones (no permitido)
+        [InlineData("2011111111A")]     // Con letras
+        [InlineData("201111111111")]    // Más de 11 dígitos
+        [InlineData("")]                // Vacío
+        [InlineData("           ")]     // Espacios
+        public async Task CreateAsync_ConCuilInvalidoRegex_DevuelveCuilInvalidoError(string cuilInvalido)
         {
             // Arrange
             var dto = new CreateSiniestroDto
             {
                 CuilEmpleador = "30111111111",
-                CuilTrabajador = "ABC12345678", // No numérico
+                CuilTrabajador = cuilInvalido,
                 SiniestroEstadoId = 1
             };
 
