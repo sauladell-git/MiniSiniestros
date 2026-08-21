@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniSiniestros.Common", "Mi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniSiniestros.Tests", "MiniSiniestros.Tests\MiniSiniestros.Tests.csproj", "{2680F3B8-9B75-45F4-8154-C80A49490BD0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniSiniestros.SrtMock", "MiniSiniestros.SrtMock\MiniSiniestros.SrtMock.csproj", "{1FE71305-45CF-4404-925A-7017DC99C34A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -153,6 +155,18 @@ Global
 		{2680F3B8-9B75-45F4-8154-C80A49490BD0}.Release|x64.Build.0 = Release|Any CPU
 		{2680F3B8-9B75-45F4-8154-C80A49490BD0}.Release|x86.ActiveCfg = Release|Any CPU
 		{2680F3B8-9B75-45F4-8154-C80A49490BD0}.Release|x86.Build.0 = Release|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Debug|x64.Build.0 = Debug|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Debug|x86.Build.0 = Debug|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Release|x64.ActiveCfg = Release|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Release|x64.Build.0 = Release|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Release|x86.ActiveCfg = Release|Any CPU
+		{1FE71305-45CF-4404-925A-7017DC99C34A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

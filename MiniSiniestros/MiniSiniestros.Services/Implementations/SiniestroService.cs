@@ -23,6 +23,7 @@ namespace MiniSiniestros.Services.Implementations
         private readonly ITrabajadorService _trabajadorService;
         private readonly ISiniestroEstadoService _siniestroEstadoService;
         private readonly IPrestadorService _prestadorService;
+        private readonly IStrNotificationService _strNotificationService;
 
         public SiniestroService(
             IUoWData unitOfWork,
@@ -31,7 +32,8 @@ namespace MiniSiniestros.Services.Implementations
             IEmpleadorService empleadorService,
             ITrabajadorService trabajadorService,
             ISiniestroEstadoService siniestroEstadoService,
-            IPrestadorService prestadorService)
+            IPrestadorService prestadorService,
+            IStrNotificationService strNotificationService)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -40,6 +42,7 @@ namespace MiniSiniestros.Services.Implementations
             _trabajadorService = trabajadorService ?? throw new ArgumentNullException(nameof(trabajadorService));
             _siniestroEstadoService = siniestroEstadoService ?? throw new ArgumentNullException(nameof(siniestroEstadoService));
             _prestadorService = prestadorService ?? throw new ArgumentNullException(nameof(prestadorService));
+            _strNotificationService = strNotificationService ?? throw new ArgumentNullException(nameof(strNotificationService));
         }
 
         public async Task<ServiceResponse<IReadOnlyList<SiniestroDto>>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -252,6 +255,20 @@ namespace MiniSiniestros.Services.Implementations
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
                 _logger.LogInformation("Estado del siniestro ID {SiniestroId} cambiado exitosamente de {EstadoAnteriorId} a {NuevoEstadoId}.", siniestroId, estadoAnteriorId, nuevoEstadoId);
+
+                // 5. Si cambia a Aprobado (SiniestroEstadoId == 3), invocar a IStrNotificationService
+                if (nuevoEstadoId == SiniestroEstadoConstants.AprobadoId)
+                {
+                    try
+                    {
+                        await _strNotificationService.NotificarAprobacionSrtAsync(siniestroId, cancellationToken);
+                    }
+                    catch (Exception srtEx)
+                    {
+                        _logger.LogError(srtEx, "⚠️ Error no bloqueante al notificar a la SRT para el Siniestro ID {SiniestroId}", siniestroId);
+                    }
+                }
+
                 return ServiceResponse<bool>.Ok(true, "Estado de siniestro modificado correctamente.");
             }
             catch (Exception ex)

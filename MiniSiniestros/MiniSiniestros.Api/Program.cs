@@ -3,6 +3,8 @@ using MiniSiniestros.Data.Context;
 using MiniSiniestros.Data.Extensions;
 using MiniSiniestros.Data.Migrations.Seeds;
 using MiniSiniestros.Services.Extensions;
+using MiniSiniestros.Services.Implementations;
+using MiniSiniestros.Services.Interfaces;
 using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +27,14 @@ builder.Services.AddDataServices(builder.Configuration);
 
 // Configure Business Services Layer
 builder.Services.AddServiceLayer();
+
+// Configure Typed HttpClient for SrtNotificationClient
+builder.Services.AddHttpClient<ISrtNotificationClient, SrtNotificationClient>(client =>
+{
+    var baseUrl = builder.Configuration["SrtMock:BaseUrl"] ?? "http://localhost:8082/";
+    if (!baseUrl.EndsWith("/")) baseUrl += "/";
+    client.BaseAddress = new Uri(baseUrl);
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
