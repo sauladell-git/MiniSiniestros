@@ -16,6 +16,7 @@ namespace MiniSiniestros.Services.Extensions
             services.AddScoped<ISiniestroEstadoService, SiniestroEstadoService>();
             services.AddScoped<ISiniestroService, SiniestroService>();
             services.AddScoped<IStrNotificationService, StrNotificationService>();
+            services.AddScoped<IAuthService, AuthService>();
 
             return services;
         }

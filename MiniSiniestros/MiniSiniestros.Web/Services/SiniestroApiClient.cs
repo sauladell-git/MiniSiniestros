@@ -1,9 +1,12 @@
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MiniSiniestros.Common.Constants;
 using MiniSiniestros.Common.Enums;
 using MiniSiniestros.Common.Paging;
 using MiniSiniestros.Common.Responses;
+using MiniSiniestros.Dto.Auth;
 using MiniSiniestros.Dto.Prestador;
 using MiniSiniestros.Dto.Siniestro;
 using MiniSiniestros.Dto.Str;
@@ -14,17 +17,48 @@ namespace MiniSiniestros.Web.Services
     public class SiniestroApiClient : ISiniestroApiClient
     {
         private readonly HttpClient _httpClient;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<SiniestroApiClient> _logger;
 
-        public SiniestroApiClient(HttpClient httpClient, ILogger<SiniestroApiClient> logger)
+        public SiniestroApiClient(
+            HttpClient httpClient,
+            IHttpContextAccessor httpContextAccessor,
+            ILogger<SiniestroApiClient> logger)
         {
             _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        public async Task<ServiceResponse<AuthResponseDto>> LoginAsync(LoginDto dto, CancellationToken cancellationToken = default)
+        {
+            var requestUrl = "api/auth/login";
+            _logger.LogInformation("Enviando credenciales de inicio de sesión a la API: {RequestUrl}", requestUrl);
+
+            try
+            {
+                var response = await _httpClient.PostAsJsonAsync(requestUrl, dto, cancellationToken);
+                var apiResult = await response.Content.ReadFromJsonAsync<ServiceResponse<AuthResponseDto>>(cancellationToken: cancellationToken);
+
+                if (apiResult == null || !apiResult.Success)
+                {
+                    _logger.LogWarning("Inicio de sesión fallido desde la API.");
+                    return ServiceResponse<AuthResponseDto>.Fail(apiResult?.Errors ?? new List<ValidationError> { SiniestroErrorConstants.CredencialesInvalidas });
+                }
+
+                return apiResult;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error al conectar con el endpoint de login de la API.");
+                return ServiceResponse<AuthResponseDto>.Fail(SiniestroErrorConstants.SystemError, ex.Message);
+            }
         }
 
         public async Task<ServiceResponse<SiniestroListViewModel>> GetPagedSiniestrosAsync(SiniestroFilterViewModel filter, CancellationToken cancellationToken = default)
         {
             filter ??= new SiniestroFilterViewModel();
+            AttachBearerToken();
 
             var queryParams = new List<string>
             {
@@ -57,7 +91,7 @@ namespace MiniSiniestros.Web.Services
             try
             {
                 var apiResponse = await _httpClient.GetFromJsonAsync<ServiceResponse<PagedResponse<SiniestroDto>>>(requestUrl, cancellationToken);
-                
+
                 if (apiResponse == null || !apiResponse.Success || apiResponse.Data == null)
                 {
                     _logger.LogWarning("Respuesta no exitosa de la API de Siniestros.");
@@ -97,7 +131,7 @@ namespace MiniSiniestros.Web.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error al consumir la API de Siniestros en {RequestUrl}", requestUrl);
-                
+
                 var fallbackVm = new SiniestroListViewModel
                 {
                     Filter = filter,
@@ -111,6 +145,7 @@ namespace MiniSiniestros.Web.Services
 
         public async Task<ServiceResponse<SiniestroDetailViewModel>> GetSiniestroByIdAsync(int id, CancellationToken cancellationToken = default)
         {
+            AttachBearerToken();
             var requestUrl = $"api/siniestros/{id}";
             _logger.LogInformation("Consultando detalle de siniestro con ID {SiniestroId} en la API: {RequestUrl}", id, requestUrl);
 
@@ -145,6 +180,15 @@ namespace MiniSiniestros.Web.Services
             {
                 _logger.LogError(ex, "Error crítico al consultar el detalle del siniestro ID {SiniestroId} en la API {RequestUrl}", id, requestUrl);
                 return ServiceResponse<SiniestroDetailViewModel>.Fail(SiniestroErrorConstants.SystemError, ex.Message);
+            }
+        }
+
+        private void AttachBearerToken()
+        {
+            var token = _httpContextAccessor.HttpContext?.User.FindFirst("jwt_token")?.Value;
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             }
         }
 

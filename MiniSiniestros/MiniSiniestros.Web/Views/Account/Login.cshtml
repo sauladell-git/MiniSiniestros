@@ -1,0 +1,62 @@
+@model MiniSiniestros.Dto.Auth.LoginDto
+
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-lg border-0 rounded-3">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="fw-bold mb-1"><i class="bi bi-shield-lock me-2"></i>MiniSiniestros</h3>
+                    <p class="mb-0 text-white-50">Acceso al Sistema de Gestión</p>
+                </div>
+                <div class="card-body p-4">
+                    @if (ViewBag.ErrorMessage != null)
+                    {
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>@ViewBag.ErrorMessage
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
+                    <form asp-action="Login" method="post">
+                        <input type="hidden" name="returnUrl" value="@ViewBag.ReturnUrl" />
+
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label fw-bold">Usuario (`nombre`)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-person"></i></span>
+                                <input asp-for="Nombre" class="form-control" placeholder="Ej: Admin, Operador, Analista" required autofocus />
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Password" class="form-label fw-bold">Contraseña (`password`)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light"><i class="bi bi-key"></i></span>
+                                <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" required />
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Iniciar Sesión
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light p-3 border-top text-center text-muted small">
+                    <div class="fw-bold text-dark mb-1"><i class="bi bi-info-circle me-1"></i>Credenciales de Demostración:</div>
+                    <ul class="list-unstyled mb-0 text-start d-inline-block">
+                        <li>🟢 <strong>Admin</strong>: <code>Admin*2026</code> (Rol: Administrador)</li>
+                        <li>🟡 <strong>Operador</strong>: <code>Operador*2026</code> (Rol: Operador)</li>
+                        <li>🔴 <strong>Analista</strong>: <code>Analista*2026</code> (Rol: Analista)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
