@@ -44,9 +44,9 @@ namespace MiniSiniestros.Tests
             var user = new Usuario
             {
                 Id = 1,
-                Nombre = "Juan",
+                Nombre = "Admin",
                 Apellido = "Pérez",
-                Password = "AdminPassword*2026",
+                Password = "Admin*2026",
                 UsuarioRoles = new List<Usuario_Rol>
                 {
                     new Usuario_Rol { RolId = 1, Rol = new Rol { Id = 1, Nombre = "Administrador" } }
@@ -54,13 +54,13 @@ namespace MiniSiniestros.Tests
             };
 
             _usuarioRepoMock
-                .Setup(r => r.GetByNombreConRolesAsync("Juan", It.IsAny<CancellationToken>()))
+                .Setup(r => r.GetByNombreConRolesAsync("Admin", It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             var dto = new LoginDto
             {
-                Nombre = "Juan",
-                Password = "AdminPassword*2026"
+                Nombre = "Admin",
+                Password = "Admin*2026"
             };
 
             // Act
@@ -70,7 +70,7 @@ namespace MiniSiniestros.Tests
             Assert.True(result.Success);
             Assert.NotNull(result.Data);
             Assert.False(string.IsNullOrWhiteSpace(result.Data.Token));
-            Assert.Equal("Juan", result.Data.Nombre);
+            Assert.Equal("Admin", result.Data.Nombre);
             Assert.Single(result.Data.Roles);
             Assert.Contains("Administrador", result.Data.Roles);
 
@@ -88,18 +88,18 @@ namespace MiniSiniestros.Tests
             var user = new Usuario
             {
                 Id = 1,
-                Nombre = "Juan",
+                Nombre = "Admin",
                 Apellido = "Pérez",
-                Password = "AdminPassword*2026"
+                Password = "Admin*2026"
             };
 
             _usuarioRepoMock
-                .Setup(r => r.GetByNombreConRolesAsync("Juan", It.IsAny<CancellationToken>()))
+                .Setup(r => r.GetByNombreConRolesAsync("Admin", It.IsAny<CancellationToken>()))
                 .ReturnsAsync(user);
 
             var dto = new LoginDto
             {
-                Nombre = "Juan",
+                Nombre = "Admin",
                 Password = "PasswordEquivocado"
             };
 

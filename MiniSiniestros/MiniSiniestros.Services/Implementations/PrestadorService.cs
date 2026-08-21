@@ -21,14 +21,6 @@ namespace MiniSiniestros.Services.Implementations
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task<ServiceResponse<IReadOnlyList<PrestadorDto>>> GetAllAsync(CancellationToken cancellationToken = default)
-        {
-            _logger.LogInformation("Consultando el catálogo completo de prestadores.");
-            var prestadores = await _unitOfWork.Prestadores.GetAllAsync(cancellationToken);
-            var dtos = _mapper.Map<IReadOnlyList<PrestadorDto>>(prestadores);
-            return ServiceResponse<IReadOnlyList<PrestadorDto>>.Ok(dtos, "Prestadores obtenidos correctamente.");
-        }
-
         public async Task<ServiceResponse<PrestadorDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Consultando prestador con ID {PrestadorId}", id);

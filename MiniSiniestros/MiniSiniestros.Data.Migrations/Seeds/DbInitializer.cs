@@ -44,21 +44,21 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             {
                 new()
                 {
-                    Nombre = "Juan",
-                    Apellido = "Pérez",
-                    Password = "AdminPassword*2026"
+                    Nombre = "Admin",
+                    Apellido = "Sistema",
+                    Password = "Admin*2026"
                 },
                 new()
                 {
-                    Nombre = "María",
-                    Apellido = "Rodríguez",
-                    Password = "OperadorPassword*2026"
+                    Nombre = "Operador",
+                    Apellido = "Siniestros",
+                    Password = "Operador*2026"
                 },
                 new()
                 {
-                    Nombre = "Carlos",
-                    Apellido = "López",
-                    Password = "AnalistaPassword*2026"
+                    Nombre = "Analista",
+                    Apellido = "Revisiones",
+                    Password = "Analista*2026"
                 }
             };
 
@@ -70,15 +70,15 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             var rolOperador = await context.Roles.FirstAsync(r => r.Nombre == "Operador");
             var rolAnalista = await context.Roles.FirstAsync(r => r.Nombre == "Analista");
 
-            var usuarioJuan = await context.Usuarios.FirstAsync(u => u.Nombre == "Juan");
-            var usuarioMaria = await context.Usuarios.FirstAsync(u => u.Nombre == "María");
-            var usuarioCarlos = await context.Usuarios.FirstAsync(u => u.Nombre == "Carlos");
+            var usuarioAdmin = await context.Usuarios.FirstAsync(u => u.Nombre == "Admin");
+            var usuarioOperador = await context.Usuarios.FirstAsync(u => u.Nombre == "Operador");
+            var usuarioAnalista = await context.Usuarios.FirstAsync(u => u.Nombre == "Analista");
 
             var usuarioRolesSeed = new List<Usuario_Rol>
             {
-                new() { UsuarioId = usuarioJuan.Id, RolId = rolAdmin.Id },
-                new() { UsuarioId = usuarioMaria.Id, RolId = rolOperador.Id },
-                new() { UsuarioId = usuarioCarlos.Id, RolId = rolAnalista.Id }
+                new() { UsuarioId = usuarioAdmin.Id, RolId = rolAdmin.Id },
+                new() { UsuarioId = usuarioOperador.Id, RolId = rolOperador.Id },
+                new() { UsuarioId = usuarioAnalista.Id, RolId = rolAnalista.Id }
             };
 
             await context.UsuarioRoles.AddRangeAsync(usuarioRolesSeed);
