@@ -1,8 +1,246 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@model MiniSiniestros.ViewModels.Siniestros.SiniestroListViewModel
+
+@{
+    ViewData["Title"] = "Gestión de Siniestros";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h2 text-primary font-weight-bold mb-1">
+                <i class="bi bi-shield-exclamation me-2"></i>Gestión de Siniestros
+            </h1>
+            <p class="text-muted mb-0">Consulte, filtre y ordene el listado de siniestros registrados.</p>
+        </div>
+        <div>
+            <span class="badge bg-primary px-3 py-2 fs-6">
+                Total de Registros: @Model.Siniestros.TotalRecords
+            </span>
+        </div>
+    </div>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i><strong>Atención:</strong> @ViewBag.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <!-- Card de Filtros de Búsqueda -->
+    <div class="card shadow-sm border-0 mb-4 rounded-3">
+        <div class="card-header bg-light py-3">
+            <h5 class="card-title mb-0 text-secondary font-weight-bold">
+                <i class="bi bi-funnel-fill me-2"></i>Filtros y Ordenamiento
+            </h5>
+        </div>
+        <div class="card-body">
+            <form method="get" asp-controller="Home" asp-action="Index" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">CUIT Empleador</label>
+                    <input type="text" name="cuit" value="@Model.Filter.Cuit" class="form-control" placeholder="Ej: 30111111111" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">CUIL Trabajador</label>
+                    <input type="text" name="cuil" value="@Model.Filter.Cuil" class="form-control" placeholder="Ej: 20111111111" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">Estado</label>
+                    <select name="siniestroEstadoId" asp-items="@Model.EstadosSelectList" class="form-select"></select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">Ordenar por</label>
+                    <select name="sortBy" class="form-select">
+                        <option value="fecha" selected="@(Model.Filter.SortBy?.ToLower() == "fecha")">Fecha</option>
+                        <option value="estado" selected="@(Model.Filter.SortBy?.ToLower() == "estado")">Estado</option>
+                        <option value="numero" selected="@(Model.Filter.SortBy?.ToLower() == "numero")">Número de Siniestro</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">Fecha Desde</label>
+                    <input type="date" name="fechaDesde" value="@(Model.Filter.FechaDesde?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">Fecha Hasta</label>
+                    <input type="date" name="fechaHasta" value="@(Model.Filter.FechaHasta?.ToString("yyyy-MM-dd"))" class="form-control" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label font-weight-bold">Dirección de Orden</label>
+                    <select name="isDescending" class="form-select">
+                        <option value="true" selected="@Model.Filter.IsDescending">Descendente (Más reciente primero)</option>
+                        <option value="false" selected="@(!Model.Filter.IsDescending)">Ascendente (Más antiguo primero)</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end gap-2">
+                    <button type="submit" class="btn btn-primary w-100 fw-bold">
+                        <i class="bi bi-search me-1"></i>Buscar
+                    </button>
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100">
+                        <i class="bi bi-x-circle me-1"></i>Limpiar
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grilla Principal de Siniestros -->
+    <div class="card shadow-sm border-0 rounded-3">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-dark">
+                    <tr>
+                        <th scope="col"># Número</th>
+                        <th scope="col">
+                            <a asp-action="Index" 
+                               asp-route-cuit="@Model.Filter.Cuit" 
+                               asp-route-cuil="@Model.Filter.Cuil" 
+                               asp-route-siniestroEstadoId="@Model.Filter.SiniestroEstadoId" 
+                               asp-route-fechaDesde="@(Model.Filter.FechaDesde?.ToString("yyyy-MM-dd"))" 
+                               asp-route-fechaHasta="@(Model.Filter.FechaHasta?.ToString("yyyy-MM-dd"))" 
+                               asp-route-sortBy="fecha" 
+                               asp-route-isDescending="@(Model.Filter.SortBy?.ToLower() == "fecha" ? (!Model.Filter.IsDescending).ToString().ToLower() : "true")" 
+                               class="text-white text-decoration-none">
+                                Fecha @(Model.Filter.SortBy?.ToLower() == "fecha" ? (Model.Filter.IsDescending ? "▼" : "▲") : "")
+                            </a>
+                        </th>
+                        <th scope="col">
+                            <a asp-action="Index" 
+                               asp-route-cuit="@Model.Filter.Cuit" 
+                               asp-route-cuil="@Model.Filter.Cuil" 
+                               asp-route-siniestroEstadoId="@Model.Filter.SiniestroEstadoId" 
+                               asp-route-fechaDesde="@(Model.Filter.FechaDesde?.ToString("yyyy-MM-dd"))" 
+                               asp-route-fechaHasta="@(Model.Filter.FechaHasta?.ToString("yyyy-MM-dd"))" 
+                               asp-route-sortBy="estado" 
+                               asp-route-isDescending="@(Model.Filter.SortBy?.ToLower() == "estado" ? (!Model.Filter.IsDescending).ToString().ToLower() : "false")" 
+                               class="text-white text-decoration-none">
+                                Estado @(Model.Filter.SortBy?.ToLower() == "estado" ? (Model.Filter.IsDescending ? "▼" : "▲") : "")
+                            </a>
+                        </th>
+                        <th scope="col">Empleador (Razón Social + CUIT)</th>
+                        <th scope="col">Trabajador (Nombre + CUIL)</th>
+                        <th scope="col">Observaciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Siniestros.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center py-5 text-muted fs-5">
+                                <i class="bi bi-inbox fs-1 d-block mb-2 text-secondary"></i>
+                                No se encontraron siniestros con los filtros especificados.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        foreach (var item in Model.Siniestros.Items)
+                        {
+                            <tr>
+                                <td class="fw-bold text-primary">#@item.Numero</td>
+                                <td>@item.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @{
+                                        var badgeClass = item.SiniestroEstadoId switch
+                                        {
+                                            1 => "bg-info text-dark",       // Recibido
+                                            2 => "bg-warning text-dark",    // EnAnalisis
+                                            3 => "bg-success text-white",   // Aprobado
+                                            4 => "bg-danger text-white",    // Rechazado
+                                            5 => "bg-secondary text-white", // Cerrado
+                                            _ => "bg-dark text-white"
+                                        };
+                                    }
+                                    <span class="badge @badgeClass px-3 py-2 fs-6">@item.EstadoNombre</span>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">@item.EmpleadorRazonSocial</span>
+                                    <br />
+                                    <small class="text-muted">CUIT: @item.EmpleadorCuit</small>
+                                </td>
+                                <td>
+                                    <span class="fw-bold">@item.TrabajadorNombreCompleto</span>
+                                    <br />
+                                    <small class="text-muted">CUIL: @item.TrabajadorCuil</small>
+                                </td>
+                                <td>
+                                    <span class="text-truncate d-inline-block" style="max-width: 250px;" title="@item.Observaciones">
+                                        @(string.IsNullOrWhiteSpace(item.Observaciones) ? "-" : item.Observaciones)
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Paginador -->
+        @if (Model.Siniestros.TotalPages > 1)
+        {
+            <div class="card-footer bg-white py-3 d-flex justify-content-between align-items-center">
+                <span class="text-muted">
+                    Página <strong>@Model.Siniestros.PageNumber</strong> de <strong>@Model.Siniestros.TotalPages</strong>
+                </span>
+
+                <nav aria-label="Navegación de páginas">
+                    <ul class="pagination mb-0">
+                        <!-- Página Anterior -->
+                        <li class="page-item @(Model.Siniestros.HasPreviousPage ? "" : "disabled")">
+                            <a class="page-link" 
+                               asp-action="Index" 
+                               asp-route-pageNumber="@(Model.Siniestros.PageNumber - 1)" 
+                               asp-route-pageSize="@Model.Filter.PageSize" 
+                               asp-route-cuit="@Model.Filter.Cuit" 
+                               asp-route-cuil="@Model.Filter.Cuil" 
+                               asp-route-siniestroEstadoId="@Model.Filter.SiniestroEstadoId" 
+                               asp-route-fechaDesde="@(Model.Filter.FechaDesde?.ToString("yyyy-MM-dd"))" 
+                               asp-route-fechaHasta="@(Model.Filter.FechaHasta?.ToString("yyyy-MM-dd"))" 
+                               asp-route-sortBy="@Model.Filter.SortBy" 
+                               asp-route-isDescending="@Model.Filter.IsDescending">
+                                &laquo; Anterior
+                            </a>
+                        </li>
+
+                        <!-- Números de Página -->
+                        @for (int p = 1; p <= Model.Siniestros.TotalPages; p++)
+                        {
+                            <li class="page-item @(p == Model.Siniestros.PageNumber ? "active" : "")">
+                                <a class="page-link" 
+                                   asp-action="Index" 
+                                   asp-route-pageNumber="@p" 
+                                   asp-route-pageSize="@Model.Filter.PageSize" 
+                                   asp-route-cuit="@Model.Filter.Cuit" 
+                                   asp-route-cuil="@Model.Filter.Cuil" 
+                                   asp-route-siniestroEstadoId="@Model.Filter.SiniestroEstadoId" 
+                                   asp-route-fechaDesde="@(Model.Filter.FechaDesde?.ToString("yyyy-MM-dd"))" 
+                                   asp-route-fechaHasta="@(Model.Filter.FechaHasta?.ToString("yyyy-MM-dd"))" 
+                                   asp-route-sortBy="@Model.Filter.SortBy" 
+                                   asp-route-isDescending="@Model.Filter.IsDescending">
+                                    @p
+                                </a>
+                            </li>
+                        }
+
+                        <!-- Página Siguiente -->
+                        <li class="page-item @(Model.Siniestros.HasNextPage ? "" : "disabled")">
+                            <a class="page-link" 
+                               asp-action="Index" 
+                               asp-route-pageNumber="@(Model.Siniestros.PageNumber + 1)" 
+                               asp-route-pageSize="@Model.Filter.PageSize" 
+                               asp-route-cuit="@Model.Filter.Cuit" 
+                               asp-route-cuil="@Model.Filter.Cuil" 
+                               asp-route-siniestroEstadoId="@Model.Filter.SiniestroEstadoId" 
+                               asp-route-fechaDesde="@(Model.Filter.FechaDesde?.ToString("yyyy-MM-dd"))" 
+                               asp-route-fechaHasta="@(Model.Filter.FechaHasta?.ToString("yyyy-MM-dd"))" 
+                               asp-route-sortBy="@Model.Filter.SortBy" 
+                               asp-route-isDescending="@Model.Filter.IsDescending">
+                                Siguiente &raquo;
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
 </div>

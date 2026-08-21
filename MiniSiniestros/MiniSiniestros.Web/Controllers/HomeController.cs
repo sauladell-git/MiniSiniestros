@@ -1,21 +1,33 @@
-using Microsoft.AspNetCore.Mvc;
-using MiniSiniestros.Web.Models;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using MiniSiniestros.ViewModels.Siniestros;
+using MiniSiniestros.Web.Models;
+using MiniSiniestros.Web.Services;
 
 namespace MiniSiniestros.Web.Controllers
 {
     public class HomeController : Controller
     {
+        private readonly ISiniestroApiClient _apiClient;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ISiniestroApiClient apiClient, ILogger<HomeController> logger)
         {
-            _logger = logger;
+            _apiClient = apiClient ?? throw new ArgumentNullException(nameof(apiClient));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index([FromQuery] SiniestroFilterViewModel filter, CancellationToken cancellationToken)
         {
-            return View();
+            _logger.LogInformation("Cargando vista principal de siniestros.");
+            var response = await _apiClient.GetPagedSiniestrosAsync(filter, cancellationToken);
+
+            if (!response.Success && response.Errors.Count > 0)
+            {
+                ViewBag.ErrorMessage = response.Errors[0].Message;
+            }
+
+            return View(response.Data ?? new SiniestroListViewModel());
         }
 
         public IActionResult Privacy()
