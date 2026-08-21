@@ -28,7 +28,18 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             await context.SiniestroEstados.AddRangeAsync(estados);
             await context.SaveChangesAsync();
 
-            // 4. Seed Usuarios (2 usuarios)
+            // 4. Seed Roles
+            var roles = new List<Rol>
+            {
+                new() { Nombre = "Administrador", Descripcion = "Acceso total a la plataforma" },
+                new() { Nombre = "Analista", Descripcion = "Gestión y revisión de siniestros" },
+                new() { Nombre = "Operador", Descripcion = "Carga de siniestros y consultas" }
+            };
+
+            await context.Roles.AddRangeAsync(roles);
+            await context.SaveChangesAsync();
+
+            // 5. Seed Usuarios (3 usuarios: Admin, Operador, Analista)
             var usuarios = new List<Usuario>
             {
                 new()
@@ -42,10 +53,35 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                     Nombre = "María",
                     Apellido = "Rodríguez",
                     Password = "OperadorPassword*2026"
+                },
+                new()
+                {
+                    Nombre = "Carlos",
+                    Apellido = "López",
+                    Password = "AnalistaPassword*2026"
                 }
             };
 
             await context.Usuarios.AddRangeAsync(usuarios);
+            await context.SaveChangesAsync();
+
+            // 6. Seed Usuario_Rol
+            var rolAdmin = await context.Roles.FirstAsync(r => r.Nombre == "Administrador");
+            var rolOperador = await context.Roles.FirstAsync(r => r.Nombre == "Operador");
+            var rolAnalista = await context.Roles.FirstAsync(r => r.Nombre == "Analista");
+
+            var usuarioJuan = await context.Usuarios.FirstAsync(u => u.Nombre == "Juan");
+            var usuarioMaria = await context.Usuarios.FirstAsync(u => u.Nombre == "María");
+            var usuarioCarlos = await context.Usuarios.FirstAsync(u => u.Nombre == "Carlos");
+
+            var usuarioRolesSeed = new List<Usuario_Rol>
+            {
+                new() { UsuarioId = usuarioJuan.Id, RolId = rolAdmin.Id },
+                new() { UsuarioId = usuarioMaria.Id, RolId = rolOperador.Id },
+                new() { UsuarioId = usuarioCarlos.Id, RolId = rolAnalista.Id }
+            };
+
+            await context.UsuarioRoles.AddRangeAsync(usuarioRolesSeed);
             await context.SaveChangesAsync();
 
             // 5. Seed Empleadores (Empresas A, B, C, D, E, F)

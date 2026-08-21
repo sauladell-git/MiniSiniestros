@@ -15,6 +15,7 @@ namespace MiniSiniestros.Common.Constants
         public static ValidationError PrestadorNotFound => new("PRESTADOR_NOT_FOUND", "Prestador no encontrado.");
         public static ValidationError PrestadorYaAsignado => new("PRESTADOR_YA_ASIGNADO", "El prestador ya se encuentra asignado a este siniestro.");
         public static ValidationError TrabajadorNoPerteneceAEmpleador => new("TRAB_NO_PERTENECE_EMP", "El trabajador no pertenece al empleador especificado.");
+        public static ValidationError CredencialesInvalidas => new("CREDENCIALES_INVALIDAS", "Nombre de usuario o contraseña incorrectos.");
         public static ValidationError SystemError => new("SYS_ERROR", "Ocurrió un error inesperado en el sistema.");
     }
 }
