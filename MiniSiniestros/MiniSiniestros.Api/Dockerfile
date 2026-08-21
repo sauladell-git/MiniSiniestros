@@ -15,6 +15,7 @@ COPY ["MiniSiniestros.Data/MiniSiniestros.Data.csproj", "MiniSiniestros.Data/"]
 COPY ["MiniSiniestros.Data.Migrations/MiniSiniestros.Data.Migrations.csproj", "MiniSiniestros.Data.Migrations/"]
 COPY ["MiniSiniestros.Models/MiniSiniestros.Entities.csproj", "MiniSiniestros.Models/"]
 COPY ["MiniSiniestros.Dto/MiniSiniestros.Dto.csproj", "MiniSiniestros.Dto/"]
+COPY ["MiniSiniestros.Common/MiniSiniestros.Common.csproj", "MiniSiniestros.Common/"]
 COPY ["MiniSiniestros.ViewModels/MiniSiniestros.ViewModels.csproj", "MiniSiniestros.ViewModels/"]
 
 RUN dotnet restore "MiniSiniestros.Api/MiniSiniestros.Api.csproj"

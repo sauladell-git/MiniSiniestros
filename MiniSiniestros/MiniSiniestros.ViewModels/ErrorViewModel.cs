@@ -1,4 +1,4 @@
-namespace MiniSiniestros.Web.Models
+namespace MiniSiniestros.ViewModels
 {
     public class ErrorViewModel
     {

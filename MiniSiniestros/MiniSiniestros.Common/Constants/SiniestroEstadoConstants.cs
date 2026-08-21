@@ -16,5 +16,17 @@ namespace MiniSiniestros.Common.Constants
 
         public const int CerradoId = 5;
         public const string Cerrado = "Cerrado";
+
+        public static IReadOnlyList<(int Id, string Nombre)> GetAllEstados()
+        {
+            return new List<(int Id, string Nombre)>
+            {
+                (RecibidoId, Recibido),
+                (EnAnalisisId, EnAnalisis),
+                (AprobadoId, Aprobado),
+                (RechazadoId, Rechazado),
+                (CerradoId, Cerrado)
+            };
+        }
     }
 }
