@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using MiniSiniestros.Common.Constants;
 using MiniSiniestros.Common.Paging;
 using MiniSiniestros.Common.Responses;
+using MiniSiniestros.Dto.Prestador;
 using MiniSiniestros.Dto.Siniestro;
 using MiniSiniestros.ViewModels.Siniestros;
 
@@ -103,6 +104,44 @@ namespace MiniSiniestros.Web.Services
                 };
 
                 return ServiceResponse<SiniestroListViewModel>.Fail(SiniestroErrorConstants.SystemError, $"No se pudo conectar con la API de Siniestros: {ex.Message}");
+            }
+        }
+
+        public async Task<ServiceResponse<SiniestroDetailViewModel>> GetSiniestroByIdAsync(int id, CancellationToken cancellationToken = default)
+        {
+            var requestUrl = $"api/siniestros/{id}";
+            _logger.LogInformation("Consultando detalle de siniestro con ID {SiniestroId} en la API: {RequestUrl}", id, requestUrl);
+
+            try
+            {
+                var apiResponse = await _httpClient.GetFromJsonAsync<ServiceResponse<SiniestroDto>>(requestUrl, cancellationToken);
+
+                if (apiResponse == null || !apiResponse.Success || apiResponse.Data == null)
+                {
+                    _logger.LogWarning("Detalle de siniestro ID {SiniestroId} no encontrado o error en respuesta de API.", id);
+                    return ServiceResponse<SiniestroDetailViewModel>.Fail(apiResponse?.Errors ?? new List<ValidationError> { SiniestroErrorConstants.SiniestroNotFound });
+                }
+
+                var dto = apiResponse.Data;
+                var detailVm = new SiniestroDetailViewModel
+                {
+                    Id = dto.Id,
+                    Numero = dto.Numero,
+                    Fecha = dto.Fecha,
+                    Observaciones = dto.Observaciones,
+                    Empleador = dto.Empleador,
+                    Trabajador = dto.Trabajador,
+                    SiniestroEstado = dto.SiniestroEstado,
+                    Prestadores = dto.Prestadores?.ToList() ?? new List<PrestadorDto>(),
+                    HistorialEstados = dto.HistorialEstados?.ToList() ?? new List<SiniestroEstadoHistorialDto>()
+                };
+
+                return ServiceResponse<SiniestroDetailViewModel>.Ok(detailVm);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error crítico al consultar el detalle del siniestro ID {SiniestroId} en la API {RequestUrl}", id, requestUrl);
+                return ServiceResponse<SiniestroDetailViewModel>.Fail(SiniestroErrorConstants.SystemError, ex.Message);
             }
         }
 

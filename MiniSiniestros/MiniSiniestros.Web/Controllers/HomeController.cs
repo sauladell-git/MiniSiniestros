@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using MiniSiniestros.ViewModels;
 using MiniSiniestros.ViewModels.Siniestros;
-using MiniSiniestros.Web.Models;
 using MiniSiniestros.Web.Services;
 
 namespace MiniSiniestros.Web.Controllers
@@ -28,6 +28,22 @@ namespace MiniSiniestros.Web.Controllers
             }
 
             return View(response.Data ?? new SiniestroListViewModel());
+        }
+
+        [HttpGet("Home/Detalle/{id:int}")]
+        public async Task<IActionResult> Detalle(int id, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Consultando vista de detalle para Siniestro ID {SiniestroId}", id);
+            var response = await _apiClient.GetSiniestroByIdAsync(id, cancellationToken);
+
+            if (!response.Success || response.Data == null)
+            {
+                _logger.LogWarning("No se pudo obtener el detalle del siniestro ID {SiniestroId}", id);
+                TempData["ErrorMessage"] = response.Errors.FirstOrDefault()?.Message ?? "Siniestro no encontrado.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(response.Data);
         }
 
         public IActionResult Privacy()
