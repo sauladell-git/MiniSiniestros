@@ -2,6 +2,7 @@ using System.Text.Json;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MiniSiniestros.Common.Constants;
+using MiniSiniestros.Common.Enums;
 using MiniSiniestros.Common.Responses;
 using MiniSiniestros.Data.UnitOfWork;
 using MiniSiniestros.Dto.Str;
@@ -31,12 +32,12 @@ namespace MiniSiniestros.Services.Implementations
 
         public async Task<ServiceResponse<NotificacionSrtDto>> NotificarAprobacionSrtAsync(int siniestroId, CancellationToken cancellationToken = default)
         {
-            _logger.LogInformation(" [SRT-SERVICE] Iniciando proceso de notificación SRT para Siniestro ID {SiniestroId}", siniestroId);
+            _logger.LogInformation("📢 [SRT-SERVICE] Iniciando proceso de notificación SRT para Siniestro ID {SiniestroId}", siniestroId);
 
             var siniestro = await _unitOfWork.Siniestros.GetByIdAsync(siniestroId, cancellationToken);
             if (siniestro == null)
             {
-                _logger.LogWarning("⚠ [SRT-SERVICE] Siniestro con ID {SiniestroId} no encontrado.", siniestroId);
+                _logger.LogWarning("⚠️ [SRT-SERVICE] Siniestro con ID {SiniestroId} no encontrado.", siniestroId);
                 return ServiceResponse<NotificacionSrtDto>.Fail(SiniestroErrorConstants.SiniestroNotFound);
             }
 
@@ -44,7 +45,7 @@ namespace MiniSiniestros.Services.Implementations
             {
                 SiniestroId = siniestroId,
                 FechaAprobacion = DateTime.UtcNow,
-                Estado = SiniestroEstadoConstants.Aprobado
+                Estado = SiniestroEstadoEnum.Aprobado.ToString()
             };
 
             var outcome = await _srtClient.NotificarAprobacionAsync(payload, cancellationToken);

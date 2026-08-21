@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using MiniSiniestros.Common.Constants;
+using MiniSiniestros.Common.Enums;
 using MiniSiniestros.Data.Context;
 using MiniSiniestros.Entities;
 
@@ -18,11 +18,11 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             // 3. Seed SiniestroEstados (Recibido, EnAnalisis, Aprobado, Rechazado, Cerrado)
             var estados = new List<SiniestroEstado>
             {
-                new() { Nombre = SiniestroEstadoConstants.Recibido },
-                new() { Nombre = SiniestroEstadoConstants.EnAnalisis },
-                new() { Nombre = SiniestroEstadoConstants.Aprobado },
-                new() { Nombre = SiniestroEstadoConstants.Rechazado },
-                new() { Nombre = SiniestroEstadoConstants.Cerrado }
+                new() { Nombre = SiniestroEstadoEnum.Recibido.ToString() },
+                new() { Nombre = SiniestroEstadoEnum.EnAnalisis.ToString() },
+                new() { Nombre = SiniestroEstadoEnum.Aprobado.ToString() },
+                new() { Nombre = SiniestroEstadoEnum.Rechazado.ToString() },
+                new() { Nombre = SiniestroEstadoEnum.Cerrado.ToString() }
             };
 
             await context.SiniestroEstados.AddRangeAsync(estados);
@@ -149,11 +149,17 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             await context.SaveChangesAsync();
 
             // 8. Seed Siniestros
-            var estadoRecibido = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.Recibido);
-            var estadoEnAnalisis = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.EnAnalisis);
-            var estadoAprobado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.Aprobado);
-            var estadoRechazado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.Rechazado);
-            var estadoCerrado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == SiniestroEstadoConstants.Cerrado);
+            var estadoRecibidoStr = SiniestroEstadoEnum.Recibido.ToString();
+            var estadoEnAnalisisStr = SiniestroEstadoEnum.EnAnalisis.ToString();
+            var estadoAprobadoStr = SiniestroEstadoEnum.Aprobado.ToString();
+            var estadoRechazadoStr = SiniestroEstadoEnum.Rechazado.ToString();
+            var estadoCerradoStr = SiniestroEstadoEnum.Cerrado.ToString();
+
+            var estadoRecibido = await context.SiniestroEstados.FirstAsync(e => e.Nombre == estadoRecibidoStr);
+            var estadoEnAnalisis = await context.SiniestroEstados.FirstAsync(e => e.Nombre == estadoEnAnalisisStr);
+            var estadoAprobado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == estadoAprobadoStr);
+            var estadoRechazado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == estadoRechazadoStr);
+            var estadoCerrado = await context.SiniestroEstados.FirstAsync(e => e.Nombre == estadoCerradoStr);
 
             var trabajadorCharly = await context.Trabajadores.FirstAsync(t => t.Cuil == "20111111111");
             var trabajadorCerati = await context.Trabajadores.FirstAsync(t => t.Cuil == "20222222222");

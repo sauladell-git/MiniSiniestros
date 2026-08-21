@@ -1,5 +1,6 @@
 using MiniSiniestros.Dto.Empleador;
 using MiniSiniestros.Dto.Prestador;
+using MiniSiniestros.Dto.Str;
 using MiniSiniestros.Dto.Trabajador;
 
 namespace MiniSiniestros.Dto.Siniestro
@@ -31,6 +32,7 @@ namespace MiniSiniestros.Dto.Siniestro
 
         public List<PrestadorDto> Prestadores { get; set; } = new();
         public List<SiniestroEstadoHistorialDto> HistorialEstados { get; set; } = new();
+        public List<NotificacionSrtDto> NotificacionesSRT { get; set; } = new();
     }
 
     public class CreateSiniestroDto

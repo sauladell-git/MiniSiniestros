@@ -7,5 +7,6 @@ namespace MiniSiniestros.Services.Interfaces
     {
         Task<ServiceResponse<IReadOnlyList<PrestadorDto>>> GetAllAsync(CancellationToken cancellationToken = default);
         Task<ServiceResponse<PrestadorDto>> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+        Task<ServiceResponse<IReadOnlyList<PrestadorDto>>> GetPrestadoresPorSiniestrosAsync(int siniestroId, CancellationToken cancellationToken = default);
     }
 }

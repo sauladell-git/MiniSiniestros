@@ -194,6 +194,70 @@
                 </div>
             </div>
         </div>
+
+        <!-- Card 5: Notificaciones enviadas a la SRT -->
+        <div class="col-12">
+            <div class="card shadow-sm border-0 rounded-3">
+                <div class="card-header bg-dark text-white py-3">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-send-check me-2"></i>Notificaciones SRT Registradas
+                    </h5>
+                </div>
+                <div class="card-body p-0">
+                    @if (Model.NotificacionesSRT.Count == 0)
+                    {
+                        <div class="p-4 text-center text-muted">
+                            <i class="bi bi-bell-slash fs-2 d-block mb-1 text-secondary"></i>
+                            Sin notificaciones SRT enviadas para este siniestro.
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Fecha y Hora</th>
+                                        <th>Estado / Status</th>
+                                        <th>Intentos Polly</th>
+                                        <th>Payload</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var n in Model.NotificacionesSRT.OrderByDescending(x => x.Timestamp))
+                                    {
+                                        var statusBadge = n.Status switch
+                                        {
+                                            "ENTREGADO_OK" => "bg-success text-white",
+                                            "CIRCUITO_ABIERTO" => "bg-warning text-dark",
+                                            "TIMEOUT_EXCEDIDO" => "bg-danger text-white",
+                                            _ => "bg-info text-dark"
+                                        };
+
+                                        <tr>
+                                            <td>@n.Timestamp.ToString("dd/MM/yyyy HH:mm:ss") UTC</td>
+                                            <td>
+                                                <span class="badge @statusBadge px-2 py-1">
+                                                    @n.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="badge bg-secondary px-2 py-1">
+                                                    @n.Intentos intento(s)
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <code class="small text-break">@n.Payload</code>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Botón de Acción Inferior -->

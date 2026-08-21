@@ -3,6 +3,7 @@ using AutoMapper;
 using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using MiniSiniestros.Common.Constants;
+using MiniSiniestros.Common.Enums;
 using MiniSiniestros.Common.Responses;
 using MiniSiniestros.Data.Repositories.Interfaces;
 using MiniSiniestros.Data.UnitOfWork;
@@ -57,6 +58,14 @@ namespace MiniSiniestros.Tests
             _uowMock.Setup(u => u.SiniestroEstadoHistoriales).Returns(_historialRepoMock.Object);
             _uowMock.Setup(u => u.SiniestroPrestadores).Returns(_siniestroPrestadorRepoMock.Object);
             _uowMock.Setup(u => u.Prestadores).Returns(_prestadorRepoMock.Object);
+
+            _prestadorServiceMock
+                .Setup(p => p.GetPrestadoresPorSiniestrosAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ServiceResponse<IReadOnlyList<PrestadorDto>>.Ok(new List<PrestadorDto>()));
+
+            _strNotificationServiceMock
+                .Setup(s => s.GetBySiniestroIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ServiceResponse<IReadOnlyList<NotificacionSrtDto>>.Ok(new List<NotificacionSrtDto>()));
 
             var dbTransactionMock = new Mock<Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction>();
             _uowMock.Setup(u => u.BeginTransactionAsync(It.IsAny<CancellationToken>()))
@@ -301,11 +310,14 @@ namespace MiniSiniestros.Tests
         public async Task CambiarEstadoAsync_AAprobado_InvocaIStrNotificationService()
         {
             // Arrange
+            var aprobadoId = (int)SiniestroEstadoEnum.Aprobado;
+            var enAnalisisId = (int)SiniestroEstadoEnum.EnAnalisis;
+
             _siniestroEstadoServiceMock
-                .Setup(s => s.ExisteEstadoAsync(SiniestroEstadoConstants.AprobadoId, It.IsAny<CancellationToken>()))
+                .Setup(s => s.ExisteEstadoAsync(aprobadoId, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ServiceResponse<bool>.Ok(true));
 
-            var siniestro = new Siniestro { Id = 10, SiniestroEstadoId = SiniestroEstadoConstants.EnAnalisisId };
+            var siniestro = new Siniestro { Id = 10, SiniestroEstadoId = enAnalisisId };
             _siniestroRepoMock
                 .Setup(r => r.GetByIdAsync(10, It.IsAny<CancellationToken>()))
                 .ReturnsAsync(siniestro);
@@ -315,11 +327,11 @@ namespace MiniSiniestros.Tests
                 .ReturnsAsync(ServiceResponse<NotificacionSrtDto>.Ok(new NotificacionSrtDto { Id = 1, SiniestroId = 10, Status = "ENTREGADO_OK" }));
 
             // Act
-            var result = await _service.CambiarEstadoAsync(10, SiniestroEstadoConstants.AprobadoId);
+            var result = await _service.CambiarEstadoAsync(10, aprobadoId);
 
             // Assert
             result.Success.Should().BeTrue();
-            siniestro.SiniestroEstadoId.Should().Be(SiniestroEstadoConstants.AprobadoId);
+            siniestro.SiniestroEstadoId.Should().Be(aprobadoId);
 
             _strNotificationServiceMock.Verify(s => s.NotificarAprobacionSrtAsync(10, It.IsAny<CancellationToken>()), Times.Once);
         }

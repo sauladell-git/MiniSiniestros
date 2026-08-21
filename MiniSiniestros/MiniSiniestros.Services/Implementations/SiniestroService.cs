@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MiniSiniestros.Common.Constants;
+using MiniSiniestros.Common.Enums;
 using MiniSiniestros.Common.Paging;
 using MiniSiniestros.Common.Responses;
 using MiniSiniestros.Data.UnitOfWork;
@@ -257,7 +258,7 @@ namespace MiniSiniestros.Services.Implementations
                 _logger.LogInformation("Estado del siniestro ID {SiniestroId} cambiado exitosamente de {EstadoAnteriorId} a {NuevoEstadoId}.", siniestroId, estadoAnteriorId, nuevoEstadoId);
 
                 // 5. Si cambia a Aprobado (SiniestroEstadoId == 3), invocar a IStrNotificationService
-                if (nuevoEstadoId == SiniestroEstadoConstants.AprobadoId)
+                if (nuevoEstadoId == (int)SiniestroEstadoEnum.Aprobado)
                 {
                     try
                     {
@@ -333,14 +334,20 @@ namespace MiniSiniestros.Services.Implementations
 
         private async Task LoadPrestadoresYHistorialAsync(SiniestroDto dto, CancellationToken cancellationToken)
         {
-            var prestadoresAsignados = await _unitOfWork.SiniestroPrestadores.GetPrestadoresPorSiniestroAsync(dto.Id, cancellationToken);
-            dto.Prestadores = prestadoresAsignados
-                .Where(sp => sp.Prestador != null)
-                .Select(sp => _mapper.Map<PrestadorDto>(sp.Prestador))
-                .ToList();
+            var prestadoresRes = await _prestadorService.GetPrestadoresPorSiniestrosAsync(dto.Id, cancellationToken);
+            if (prestadoresRes.Success && prestadoresRes.Data != null)
+            {
+                dto.Prestadores = prestadoresRes.Data.ToList();
+            }
 
             var historiales = await _unitOfWork.SiniestroEstadoHistoriales.GetHistorialPorSiniestroAsync(dto.Id, cancellationToken);
             dto.HistorialEstados = _mapper.Map<List<SiniestroEstadoHistorialDto>>(historiales);
+
+            var notificacionesRes = await _strNotificationService.GetBySiniestroIdAsync(dto.Id, cancellationToken);
+            if (notificacionesRes.Success && notificacionesRes.Data != null)
+            {
+                dto.NotificacionesSRT = notificacionesRes.Data.ToList();
+            }
         }
     }
 }
