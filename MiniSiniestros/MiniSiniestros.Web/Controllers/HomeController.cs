@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MiniSiniestros.ViewModels;
 using MiniSiniestros.ViewModels.Siniestros;
@@ -6,6 +7,7 @@ using MiniSiniestros.Web.Services;
 
 namespace MiniSiniestros.Web.Controllers
 {
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly ISiniestroApiClient _apiClient;
@@ -46,11 +48,13 @@ namespace MiniSiniestros.Web.Controllers
             return View(response.Data);
         }
 
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        [AllowAnonymous]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
