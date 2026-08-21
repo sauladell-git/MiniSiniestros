@@ -6,6 +6,7 @@ namespace MiniSiniestros.Data.UnitOfWork
     public interface IUoWData : IDisposable, IAsyncDisposable
     {
         IEmpleadorRepository Empleadores { get; }
+        INotificacionSRTRepository NotificacionesSRT { get; }
         IPrestadorRepository Prestadores { get; }
         ISiniestroRepository Siniestros { get; }
         ISiniestroEstadoRepository SiniestroEstados { get; }

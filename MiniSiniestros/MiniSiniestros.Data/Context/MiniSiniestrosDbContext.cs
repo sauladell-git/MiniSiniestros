@@ -12,6 +12,7 @@ namespace MiniSiniestros.Data.Context
         }
 
         public DbSet<Empleador> Empleadores { get; set; } = null!;
+        public DbSet<NotificacionSRT> NotificacionesSRT { get; set; } = null!;
         public DbSet<Prestador> Prestadores { get; set; } = null!;
         public DbSet<Siniestro> Siniestros { get; set; } = null!;
         public DbSet<SiniestroEstado> SiniestroEstados { get; set; } = null!;
