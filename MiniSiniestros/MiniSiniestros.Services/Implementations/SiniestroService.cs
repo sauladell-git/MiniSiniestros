@@ -2,6 +2,7 @@ using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using MiniSiniestros.Common.Constants;
+using MiniSiniestros.Common.Enums;
 using MiniSiniestros.Common.Paging;
 using MiniSiniestros.Common.Responses;
 using MiniSiniestros.Data.UnitOfWork;
@@ -23,6 +24,7 @@ namespace MiniSiniestros.Services.Implementations
         private readonly ITrabajadorService _trabajadorService;
         private readonly ISiniestroEstadoService _siniestroEstadoService;
         private readonly IPrestadorService _prestadorService;
+        private readonly IStrNotificationService _strNotificationService;
 
         public SiniestroService(
             IUoWData unitOfWork,
@@ -31,7 +33,8 @@ namespace MiniSiniestros.Services.Implementations
             IEmpleadorService empleadorService,
             ITrabajadorService trabajadorService,
             ISiniestroEstadoService siniestroEstadoService,
-            IPrestadorService prestadorService)
+            IPrestadorService prestadorService,
+            IStrNotificationService strNotificationService)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -40,6 +43,7 @@ namespace MiniSiniestros.Services.Implementations
             _trabajadorService = trabajadorService ?? throw new ArgumentNullException(nameof(trabajadorService));
             _siniestroEstadoService = siniestroEstadoService ?? throw new ArgumentNullException(nameof(siniestroEstadoService));
             _prestadorService = prestadorService ?? throw new ArgumentNullException(nameof(prestadorService));
+            _strNotificationService = strNotificationService ?? throw new ArgumentNullException(nameof(strNotificationService));
         }
 
         public async Task<ServiceResponse<IReadOnlyList<SiniestroDto>>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -148,13 +152,6 @@ namespace MiniSiniestros.Services.Implementations
                 return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.TrabajadorNoPerteneceAEmpleador);
             }
 
-            // Validar Estado de Siniestro usando ISiniestroEstadoService
-            var estadoValidoRes = await _siniestroEstadoService.ExisteEstadoAsync(dto.SiniestroEstadoId, cancellationToken);
-            if (!estadoValidoRes.Success)
-            {
-                _logger.LogWarning("Validación fallida: Estado de siniestro con ID {EstadoId} no existe.", dto.SiniestroEstadoId);
-                return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.EstadoNoDisponible);
-            }
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
@@ -163,6 +160,8 @@ namespace MiniSiniestros.Services.Implementations
                 var siniestro = _mapper.Map<Siniestro>(dto);
                 siniestro.EmpleadorId = empleador.Id;
                 siniestro.TrabajadorId = trabajador.Id;
+                siniestro.Fecha = System.DateTime.Now;
+                siniestro.SiniestroEstadoId = (int)SiniestroEstadoEnum.Recibido;
 
                 // Calcular automáticamente el número como el último número + 1
                 var ultimoNumero = await _unitOfWork.Siniestros.GetUltimoNumeroAsync(cancellationToken);
@@ -171,27 +170,13 @@ namespace MiniSiniestros.Services.Implementations
                 await _unitOfWork.Siniestros.AddAsync(siniestro, cancellationToken);
                 await _unitOfWork.CompleteAsync(cancellationToken);
 
-                // Asignar prestadores seleccionados
-                if (dto.PrestadorIds != null && dto.PrestadorIds.Count > 0)
-                {
-                    foreach (var prestadorId in dto.PrestadorIds.Distinct())
-                    {
-                        if (await _unitOfWork.Prestadores.ExistsAsync(p => p.Id == prestadorId, cancellationToken))
-                        {
-                            await _unitOfWork.SiniestroPrestadores.AddAsync(new Siniestro_Prestador
-                            {
-                                SiniestroId = siniestro.Id,
-                                PrestadorId = prestadorId
-                            }, cancellationToken);
-                        }
-                    }
-                }
+                
 
                 // Registrar historial inicial
                 await _unitOfWork.SiniestroEstadoHistoriales.AddAsync(new SiniestroEstadoHistorial
                 {
                     SiniestroId = siniestro.Id,
-                    SiniestroEstadoId = dto.SiniestroEstadoId,
+                    SiniestroEstadoId = (int)SiniestroEstadoEnum.Recibido,
                     Fecha = DateTime.UtcNow
                 }, cancellationToken);
 
@@ -252,6 +237,20 @@ namespace MiniSiniestros.Services.Implementations
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
 
                 _logger.LogInformation("Estado del siniestro ID {SiniestroId} cambiado exitosamente de {EstadoAnteriorId} a {NuevoEstadoId}.", siniestroId, estadoAnteriorId, nuevoEstadoId);
+
+                // 5. Si cambia a Aprobado (SiniestroEstadoId == 3), invocar a IStrNotificationService
+                if (nuevoEstadoId == (int)SiniestroEstadoEnum.Aprobado)
+                {
+                    try
+                    {
+                        await _strNotificationService.NotificarAprobacionSrtAsync(siniestroId, cancellationToken);
+                    }
+                    catch (Exception srtEx)
+                    {
+                        _logger.LogError(srtEx, "⚠️ Error no bloqueante al notificar a la SRT para el Siniestro ID {SiniestroId}", siniestroId);
+                    }
+                }
+
                 return ServiceResponse<bool>.Ok(true, "Estado de siniestro modificado correctamente.");
             }
             catch (Exception ex)
@@ -316,14 +315,20 @@ namespace MiniSiniestros.Services.Implementations
 
         private async Task LoadPrestadoresYHistorialAsync(SiniestroDto dto, CancellationToken cancellationToken)
         {
-            var prestadoresAsignados = await _unitOfWork.SiniestroPrestadores.GetPrestadoresPorSiniestroAsync(dto.Id, cancellationToken);
-            dto.Prestadores = prestadoresAsignados
-                .Where(sp => sp.Prestador != null)
-                .Select(sp => _mapper.Map<PrestadorDto>(sp.Prestador))
-                .ToList();
+            var prestadoresRes = await _prestadorService.GetPrestadoresPorSiniestrosAsync(dto.Id, cancellationToken);
+            if (prestadoresRes.Success && prestadoresRes.Data != null)
+            {
+                dto.Prestadores = prestadoresRes.Data.ToList();
+            }
 
             var historiales = await _unitOfWork.SiniestroEstadoHistoriales.GetHistorialPorSiniestroAsync(dto.Id, cancellationToken);
             dto.HistorialEstados = _mapper.Map<List<SiniestroEstadoHistorialDto>>(historiales);
+
+            var notificacionesRes = await _strNotificationService.GetBySiniestroIdAsync(dto.Id, cancellationToken);
+            if (notificacionesRes.Success && notificacionesRes.Data != null)
+            {
+                dto.NotificacionesSRT = notificacionesRes.Data.ToList();
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 using MiniSiniestros.Dto.Empleador;
 using MiniSiniestros.Dto.Prestador;
+using MiniSiniestros.Dto.Str;
 using MiniSiniestros.Dto.Trabajador;
 
 namespace MiniSiniestros.Dto.Siniestro
@@ -31,13 +32,12 @@ namespace MiniSiniestros.Dto.Siniestro
 
         public List<PrestadorDto> Prestadores { get; set; } = new();
         public List<SiniestroEstadoHistorialDto> HistorialEstados { get; set; } = new();
+        public List<NotificacionSrtDto> NotificacionesSRT { get; set; } = new();
     }
 
     public class CreateSiniestroDto
     {
-        public DateTime Fecha { get; set; } = DateTime.UtcNow;
-        public int SiniestroEstadoId { get; set; }
-        public List<int> PrestadorIds { get; set; } = new();
+  
 
         public string CuilEmpleador { get; set; } = string.Empty;
         public string CuilTrabajador { get; set; } = string.Empty;

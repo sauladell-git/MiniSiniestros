@@ -43,5 +43,18 @@ namespace MiniSiniestros.Services.Implementations
             var dto = _mapper.Map<PrestadorDto>(prestador);
             return ServiceResponse<PrestadorDto>.Ok(dto);
         }
+
+        public async Task<ServiceResponse<IReadOnlyList<PrestadorDto>>> GetPrestadoresPorSiniestrosAsync(int siniestroId, CancellationToken cancellationToken = default)
+        {
+            _logger.LogInformation("Consultando prestadores asignados al Siniestro ID {SiniestroId}", siniestroId);
+
+            var prestadoresAsignados = await _unitOfWork.SiniestroPrestadores.GetPrestadoresPorSiniestroAsync(siniestroId, cancellationToken);
+            var dtos = prestadoresAsignados
+                .Where(sp => sp.Prestador != null)
+                .Select(sp => _mapper.Map<PrestadorDto>(sp.Prestador))
+                .ToList();
+
+            return ServiceResponse<IReadOnlyList<PrestadorDto>>.Ok(dtos);
+        }
     }
 }

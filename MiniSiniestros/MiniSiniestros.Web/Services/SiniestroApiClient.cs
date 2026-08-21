@@ -1,10 +1,12 @@
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MiniSiniestros.Common.Constants;
+using MiniSiniestros.Common.Enums;
 using MiniSiniestros.Common.Paging;
 using MiniSiniestros.Common.Responses;
 using MiniSiniestros.Dto.Prestador;
 using MiniSiniestros.Dto.Siniestro;
+using MiniSiniestros.Dto.Str;
 using MiniSiniestros.ViewModels.Siniestros;
 
 namespace MiniSiniestros.Web.Services
@@ -133,7 +135,8 @@ namespace MiniSiniestros.Web.Services
                     Trabajador = dto.Trabajador,
                     SiniestroEstado = dto.SiniestroEstado,
                     Prestadores = dto.Prestadores?.ToList() ?? new List<PrestadorDto>(),
-                    HistorialEstados = dto.HistorialEstados?.ToList() ?? new List<SiniestroEstadoHistorialDto>()
+                    HistorialEstados = dto.HistorialEstados?.ToList() ?? new List<SiniestroEstadoHistorialDto>(),
+                    NotificacionesSRT = dto.NotificacionesSRT?.ToList() ?? new List<NotificacionSrtDto>()
                 };
 
                 return ServiceResponse<SiniestroDetailViewModel>.Ok(detailVm);
@@ -152,8 +155,11 @@ namespace MiniSiniestros.Web.Services
                 new SelectListItem { Value = "", Text = "-- Todos los Estados --", Selected = !selectedEstadoId.HasValue || selectedEstadoId.Value == 0 }
             };
 
-            foreach (var (id, nombre) in SiniestroEstadoConstants.GetAllEstados())
+            foreach (var estado in Enum.GetValues<SiniestroEstadoEnum>())
             {
+                var id = (int)estado;
+                var nombre = estado.ToString();
+
                 list.Add(new SelectListItem
                 {
                     Value = id.ToString(),

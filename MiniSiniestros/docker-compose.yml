@@ -18,6 +18,17 @@ services:
       retries: 10
       start_period: 15s
 
+  srtmock:
+    build:
+      context: .
+      dockerfile: MiniSiniestros.SrtMock/Dockerfile
+    container_name: minisiniestros-srtmock
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    networks:
+      - minisiniestros-net
+
   api:
     build:
       context: .
@@ -28,11 +39,16 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - ConnectionStrings__DefaultConnection=Server=minisiniestros-sql,1433;Database=MiniSiniestros;User Id=sa;Password=MiniSiniestros*2026!;TrustServerCertificate=True;
+      - SrtMock__BaseUrl=http://minisiniestros-srtmock:8080/
     ports:
       - "8080:8080"
+    volumes:
+      - ./MiniSiniestros.Api/Logs:/app/Logs
     depends_on:
       sqlserver:
         condition: service_healthy
+      srtmock:
+        condition: service_started
     networks:
       - minisiniestros-net
 
@@ -49,6 +65,8 @@ services:
       - ApiSettings__PublicUrl=http://localhost:8080/
     ports:
       - "8081:8080"
+    volumes:
+      - ./MiniSiniestros.Web/Logs:/app/Logs
     depends_on:
       - api
     networks:

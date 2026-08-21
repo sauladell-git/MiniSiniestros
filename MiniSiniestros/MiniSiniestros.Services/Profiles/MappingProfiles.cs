@@ -2,6 +2,7 @@ using AutoMapper;
 using MiniSiniestros.Dto.Empleador;
 using MiniSiniestros.Dto.Prestador;
 using MiniSiniestros.Dto.Siniestro;
+using MiniSiniestros.Dto.Str;
 using MiniSiniestros.Dto.Trabajador;
 using MiniSiniestros.Entities;
 
@@ -33,6 +34,9 @@ namespace MiniSiniestros.Services.Profiles
                 .ForMember(dest => dest.HistorialEstados, opt => opt.Ignore());
 
             CreateMap<CreateSiniestroDto, Siniestro>();
+
+            // NotificacionSRT
+            CreateMap<NotificacionSRT, NotificacionSrtDto>().ReverseMap();
         }
     }
 }

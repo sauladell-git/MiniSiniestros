@@ -3,6 +3,7 @@ using MiniSiniestros.Common.Paging;
 using MiniSiniestros.Dto.Empleador;
 using MiniSiniestros.Dto.Prestador;
 using MiniSiniestros.Dto.Siniestro;
+using MiniSiniestros.Dto.Str;
 using MiniSiniestros.Dto.Trabajador;
 
 namespace MiniSiniestros.ViewModels.Siniestros
@@ -59,5 +60,6 @@ namespace MiniSiniestros.ViewModels.Siniestros
 
         public List<PrestadorDto> Prestadores { get; set; } = new();
         public List<SiniestroEstadoHistorialDto> HistorialEstados { get; set; } = new();
+        public List<NotificacionSrtDto> NotificacionesSRT { get; set; } = new();
     }
 }

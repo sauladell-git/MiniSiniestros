@@ -14,6 +14,7 @@ namespace MiniSiniestros.Data.UnitOfWork
         private bool _disposed;
 
         private IEmpleadorRepository? _empleadores;
+        private INotificacionSRTRepository? _notificacionesSRT;
         private IPrestadorRepository? _prestadores;
         private ISiniestroRepository? _siniestros;
         private ISiniestroEstadoRepository? _siniestroEstados;
@@ -30,6 +31,9 @@ namespace MiniSiniestros.Data.UnitOfWork
 
         public IEmpleadorRepository Empleadores =>
             _empleadores ??= new EmpleadorRepository(_context);
+
+        public INotificacionSRTRepository NotificacionesSRT =>
+            _notificacionesSRT ??= new NotificacionSRTRepository(_context);
 
         public IPrestadorRepository Prestadores =>
             _prestadores ??= new PrestadorRepository(_context);
