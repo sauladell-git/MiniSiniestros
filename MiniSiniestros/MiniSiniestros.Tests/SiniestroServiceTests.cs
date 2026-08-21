@@ -95,8 +95,8 @@ namespace MiniSiniestros.Tests
             var dto = new CreateSiniestroDto
             {
                 CuilEmpleador = cuitInvalido,
-                CuilTrabajador = "20111111111",
-                SiniestroEstadoId = 1
+                CuilTrabajador = "20111111111"
+               
             };
 
             // Act
@@ -121,8 +121,8 @@ namespace MiniSiniestros.Tests
             var dto = new CreateSiniestroDto
             {
                 CuilEmpleador = "30111111111",
-                CuilTrabajador = cuilInvalido,
-                SiniestroEstadoId = 1
+                CuilTrabajador = cuilInvalido
+                
             };
 
             // Act
@@ -141,8 +141,8 @@ namespace MiniSiniestros.Tests
             var dto = new CreateSiniestroDto
             {
                 CuilEmpleador = "30999999999",
-                CuilTrabajador = "20111111111",
-                SiniestroEstadoId = 1
+                CuilTrabajador = "20111111111"
+               
             };
 
             _empleadorServiceMock
@@ -165,7 +165,7 @@ namespace MiniSiniestros.Tests
             {
                 CuilEmpleador = "30111111111",
                 CuilTrabajador = "20111111111",
-                SiniestroEstadoId = 1
+              
             };
 
             _empleadorServiceMock
@@ -196,7 +196,7 @@ namespace MiniSiniestros.Tests
             {
                 CuilEmpleador = "30111111111",
                 CuilTrabajador = "20111111111",
-                SiniestroEstadoId = 1,
+              
                 Observaciones = "Test obs"
             };
 

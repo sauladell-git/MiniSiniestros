@@ -152,13 +152,6 @@ namespace MiniSiniestros.Services.Implementations
                 return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.TrabajadorNoPerteneceAEmpleador);
             }
 
-            // Validar Estado de Siniestro usando ISiniestroEstadoService
-            var estadoValidoRes = await _siniestroEstadoService.ExisteEstadoAsync(dto.SiniestroEstadoId, cancellationToken);
-            if (!estadoValidoRes.Success)
-            {
-                _logger.LogWarning("Validación fallida: Estado de siniestro con ID {EstadoId} no existe.", dto.SiniestroEstadoId);
-                return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.EstadoNoDisponible);
-            }
 
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
@@ -167,6 +160,8 @@ namespace MiniSiniestros.Services.Implementations
                 var siniestro = _mapper.Map<Siniestro>(dto);
                 siniestro.EmpleadorId = empleador.Id;
                 siniestro.TrabajadorId = trabajador.Id;
+                siniestro.Fecha = System.DateTime.Now;
+                siniestro.SiniestroEstadoId = (int)SiniestroEstadoEnum.Recibido;
 
                 // Calcular automáticamente el número como el último número + 1
                 var ultimoNumero = await _unitOfWork.Siniestros.GetUltimoNumeroAsync(cancellationToken);
@@ -175,27 +170,13 @@ namespace MiniSiniestros.Services.Implementations
                 await _unitOfWork.Siniestros.AddAsync(siniestro, cancellationToken);
                 await _unitOfWork.CompleteAsync(cancellationToken);
 
-                // Asignar prestadores seleccionados
-                if (dto.PrestadorIds != null && dto.PrestadorIds.Count > 0)
-                {
-                    foreach (var prestadorId in dto.PrestadorIds.Distinct())
-                    {
-                        if (await _unitOfWork.Prestadores.ExistsAsync(p => p.Id == prestadorId, cancellationToken))
-                        {
-                            await _unitOfWork.SiniestroPrestadores.AddAsync(new Siniestro_Prestador
-                            {
-                                SiniestroId = siniestro.Id,
-                                PrestadorId = prestadorId
-                            }, cancellationToken);
-                        }
-                    }
-                }
+                
 
                 // Registrar historial inicial
                 await _unitOfWork.SiniestroEstadoHistoriales.AddAsync(new SiniestroEstadoHistorial
                 {
                     SiniestroId = siniestro.Id,
-                    SiniestroEstadoId = dto.SiniestroEstadoId,
+                    SiniestroEstadoId = (int)SiniestroEstadoEnum.Recibido,
                     Fecha = DateTime.UtcNow
                 }, cancellationToken);
 

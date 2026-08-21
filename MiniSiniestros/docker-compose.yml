@@ -42,6 +42,8 @@ services:
       - SrtMock__BaseUrl=http://minisiniestros-srtmock:8080/
     ports:
       - "8080:8080"
+    volumes:
+      - ./MiniSiniestros.Api/Logs:/app/Logs
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -63,6 +65,8 @@ services:
       - ApiSettings__PublicUrl=http://localhost:8080/
     ports:
       - "8081:8080"
+    volumes:
+      - ./MiniSiniestros.Web/Logs:/app/Logs
     depends_on:
       - api
     networks:

@@ -37,9 +37,7 @@ namespace MiniSiniestros.Dto.Siniestro
 
     public class CreateSiniestroDto
     {
-        public DateTime Fecha { get; set; } = DateTime.UtcNow;
-        public int SiniestroEstadoId { get; set; }
-        public List<int> PrestadorIds { get; set; } = new();
+  
 
         public string CuilEmpleador { get; set; } = string.Empty;
         public string CuilTrabajador { get; set; } = string.Empty;
