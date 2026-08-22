@@ -34,12 +34,7 @@ namespace MiniSiniestros.Services.Implementations
         {
             _logger.LogInformation("📢 [SRT-SERVICE] Iniciando proceso de notificación SRT para Siniestro ID {SiniestroId}", siniestroId);
 
-            var siniestro = await _unitOfWork.Siniestros.GetByIdAsync(siniestroId, cancellationToken);
-            if (siniestro == null)
-            {
-                _logger.LogWarning("⚠️ [SRT-SERVICE] Siniestro con ID {SiniestroId} no encontrado.", siniestroId);
-                return ServiceResponse<NotificacionSrtDto>.Fail(SiniestroErrorConstants.SiniestroNotFound);
-            }
+       
 
             var payload = new SrtPayloadDto
             {

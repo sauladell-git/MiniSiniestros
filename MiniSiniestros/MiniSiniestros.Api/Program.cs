@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -76,7 +77,17 @@ builder.Services.AddHttpClient<ISrtNotificationClient, SrtNotificationClient>(cl
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "MiniSiniestros API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "MiniSiniestros API - Gestión de Siniestros Laborales",
+        Version = "v1",
+        Description = "API RESTful protegida con JWT Bearer para la gestión, seguimiento, auditoría y notificación ante la SRT de siniestros laborales.",
+        Contact = new OpenApiContact
+        {
+            Name = "Equipo de Desarrollo MiniSiniestros",
+            Email = "soporte@minisiniestros.com"
+        }
+    });
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -102,6 +113,13 @@ builder.Services.AddSwaggerGen(c =>
             Array.Empty<string>()
         }
     });
+
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    if (File.Exists(xmlPath))
+    {
+        c.IncludeXmlComments(xmlPath);
+    }
 });
 
 var app = builder.Build();

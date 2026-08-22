@@ -104,5 +104,25 @@ namespace MiniSiniestros.Tests
             result.Success.Should().BeFalse();
             result.Errors.First().Code.Should().Be(SiniestroErrorConstants.EstadoNoDisponible.Code);
         }
+
+        [Fact]
+        public async Task GetAllAsync_RetornaListaDeEstados()
+        {
+            // Arrange
+            var list = new List<SiniestroEstado> { new SiniestroEstado { Id = 1, Nombre = "Recibido" } };
+            var dtoList = new List<SiniestroEstadoDto> { new SiniestroEstadoDto { Id = 1, Nombre = "Recibido" } };
+
+            _estadoRepoMock.Setup(r => r.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(list);
+            _mapperMock.Setup(m => m.Map<IReadOnlyList<SiniestroEstadoDto>>(list)).Returns(dtoList);
+
+            // Act
+            var result = await _service.GetAllAsync();
+
+            // Assert
+            result.Success.Should().BeTrue();
+            result.Data.Should().NotBeNull();
+            result.Data!.Count.Should().Be(1);
+            result.Data[0].Nombre.Should().Be("Recibido");
+        }
     }
 }
