@@ -111,5 +111,77 @@ namespace MiniSiniestros.Tests
             Assert.Single(result.Errors);
             Assert.Equal("CREDENCIALES_INVALIDAS", result.Errors[0].Code);
         }
+
+        [Fact]
+        public async Task LoginAsync_UsuarioInexistente_RetornaFailCredencialesInvalidas()
+        {
+            // Arrange
+            _usuarioRepoMock
+                .Setup(r => r.GetByNombreConRolesAsync("Inexistente", It.IsAny<CancellationToken>()))
+                .ReturnsAsync((Usuario?)null);
+
+            var dto = new LoginDto { Nombre = "Inexistente", Password = "Pass" };
+
+            // Act
+            var result = await _service.LoginAsync(dto);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Single(result.Errors);
+            Assert.Equal("CREDENCIALES_INVALIDAS", result.Errors[0].Code);
+        }
+
+        [Theory]
+        [InlineData("", "password")]
+        [InlineData("usuario", "")]
+        [InlineData(null, "password")]
+        [InlineData("usuario", null)]
+        public async Task LoginAsync_DtoConCamposIncompletos_RetornaFailCredencialesInvalidas(string? nombre, string? password)
+        {
+            // Arrange
+            var dto = new LoginDto { Nombre = nombre!, Password = password! };
+
+            // Act
+            var result = await _service.LoginAsync(dto);
+
+            // Assert
+            Assert.False(result.Success);
+            Assert.Single(result.Errors);
+            Assert.Equal("CREDENCIALES_INVALIDAS", result.Errors[0].Code);
+        }
+
+        [Fact]
+        public async Task LoginAsync_UsuarioConMultiplesRoles_RetornaTodosLosRoles()
+        {
+            // Arrange
+            var user = new Usuario
+            {
+                Id = 2,
+                Nombre = "Juan",
+                Apellido = "AdminOp",
+                Password = "Pass*2026",
+                UsuarioRoles = new List<Usuario_Rol>
+                {
+                    new Usuario_Rol { RolId = 1, Rol = new Rol { Id = 1, Nombre = "Administrador" } },
+                    new Usuario_Rol { RolId = 2, Rol = new Rol { Id = 2, Nombre = "Operador" } }
+                }
+            };
+
+            _usuarioRepoMock
+                .Setup(r => r.GetByNombreConRolesAsync("Juan", It.IsAny<CancellationToken>()))
+                .ReturnsAsync(user);
+
+            var dto = new LoginDto { Nombre = "Juan", Password = "Pass*2026" };
+
+            // Act
+            var result = await _service.LoginAsync(dto);
+
+            // Assert
+            Assert.True(result.Success);
+            Assert.NotNull(result.Data);
+            Assert.Equal(2, result.Data.Roles.Count);
+            Assert.Contains("Administrador", result.Data.Roles);
+            Assert.Contains("Operador", result.Data.Roles);
+        }
     }
 }
