@@ -297,47 +297,6 @@ var assemblies = [
       { "name": "Program", "rp": "MiniSiniestros.Api_Program.html", "cl": 0, "ucl": 116, "cal": 116, "tl": 163, "cb": 0, "tb": 14, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
     ]},
   {
-    "name": "MiniSiniestros.Common",
-    "classes": [
-      { "name": "MiniSiniestros.Common.Constants.EmpleadorErrorConstants", "rp": "MiniSiniestros.Common_EmpleadorErrorConstants.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 9, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Common.Constants.PrestadorErrorConstants", "rp": "MiniSiniestros.Common_PrestadorErrorConstants.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 9, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Common.Constants.SiniestroErrorConstants", "rp": "MiniSiniestros.Common_SiniestroErrorConstants.html", "cl": 11, "ucl": 2, "cal": 13, "tl": 21, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Common.Constants.TrabajadorErrorConstants", "rp": "MiniSiniestros.Common_TrabajadorErrorConstants.html", "cl": 1, "ucl": 0, "cal": 1, "tl": 9, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Common.Constants.ValidationErrorConstants", "rp": "MiniSiniestros.Common_ValidationErrorConstants.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 14, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Common.Paging.PagedRequest", "rp": "MiniSiniestros.Common_PagedRequest.html", "cl": 4, "ucl": 0, "cal": 4, "tl": 10, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Common.Paging.PagedResponse\u003CT\u003E", "rp": "MiniSiniestros.Common_PagedResponse_1.html", "cl": 11, "ucl": 6, "cal": 17, "tl": 25, "cb": 1, "tb": 4, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Common.Responses.ServiceResponse\u003CT\u003E", "rp": "MiniSiniestros.Common_ServiceResponse_1.html", "cl": 26, "ucl": 17, "cal": 43, "tl": 75, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Common.Responses.ValidationError", "rp": "MiniSiniestros.Common_ValidationError.html", "cl": 8, "ucl": 0, "cal": 8, "tl": 75, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-    ]},
-  {
-    "name": "MiniSiniestros.Data",
-    "classes": [
-      { "name": "MiniSiniestros.Data.Configurations.EmpleadorConfiguration", "rp": "MiniSiniestros.Data_EmpleadorConfiguration.html", "cl": 12, "ucl": 0, "cal": 12, "tl": 27, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.NotificacionSRTConfiguration", "rp": "MiniSiniestros.Data_NotificacionSRTConfiguration.html", "cl": 17, "ucl": 0, "cal": 17, "tl": 34, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.PrestadorConfiguration", "rp": "MiniSiniestros.Data_PrestadorConfiguration.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 20, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.RolConfiguration", "rp": "MiniSiniestros.Data_RolConfiguration.html", "cl": 9, "ucl": 0, "cal": 9, "tl": 23, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.SiniestroConfiguration", "rp": "MiniSiniestros.Data_SiniestroConfiguration.html", "cl": 22, "ucl": 0, "cal": 22, "tl": 40, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.SiniestroEstadoConfiguration", "rp": "MiniSiniestros.Data_SiniestroEstadoConfiguration.html", "cl": 7, "ucl": 0, "cal": 7, "tl": 20, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.SiniestroEstadoHistorialConfiguration", "rp": "MiniSiniestros.Data_SiniestroEstadoHistorialConfiguration.html", "cl": 14, "ucl": 0, "cal": 14, "tl": 29, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.SiniestroPrestadorConfiguration", "rp": "MiniSiniestros.Data_SiniestroPrestadorConfiguration.html", "cl": 12, "ucl": 0, "cal": 12, "tl": 26, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.TrabajadorConfiguration", "rp": "MiniSiniestros.Data_TrabajadorConfiguration.html", "cl": 17, "ucl": 0, "cal": 17, "tl": 33, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.UsuarioConfiguration", "rp": "MiniSiniestros.Data_UsuarioConfiguration.html", "cl": 13, "ucl": 0, "cal": 13, "tl": 28, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Configurations.UsuarioRolConfiguration", "rp": "MiniSiniestros.Data_UsuarioRolConfiguration.html", "cl": 10, "ucl": 0, "cal": 10, "tl": 24, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Context.MiniSiniestrosDbContext", "rp": "MiniSiniestros.Data_MiniSiniestrosDbContext.html", "cl": 18, "ucl": 2, "cal": 20, "tl": 34, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Extensions.DataServiceRegistration", "rp": "MiniSiniestros.Data_DataServiceRegistration.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 40, "cb": 0, "tb": 2, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.EmpleadorRepository", "rp": "MiniSiniestros.Data_EmpleadorRepository.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 19, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.NotificacionSRTRepository", "rp": "MiniSiniestros.Data_NotificacionSRTRepository.html", "cl": 0, "ucl": 3, "cal": 3, "tl": 13, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.PrestadorRepository", "rp": "MiniSiniestros.Data_PrestadorRepository.html", "cl": 0, "ucl": 9, "cal": 9, "tl": 22, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.Repository\u003CT\u003E", "rp": "MiniSiniestros.Data_Repository_1.html", "cl": 52, "ucl": 41, "cal": 93, "tl": 158, "cb": 12, "tb": 26, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.SiniestroEstadoHistorialRepository", "rp": "MiniSiniestros.Data_SiniestroEstadoHistorialRepository.html", "cl": 0, "ucl": 11, "cal": 11, "tl": 24, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.SiniestroEstadoRepository", "rp": "MiniSiniestros.Data_SiniestroEstadoRepository.html", "cl": 0, "ucl": 6, "cal": 6, "tl": 19, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.SiniestroPrestadorRepository", "rp": "MiniSiniestros.Data_SiniestroPrestadorRepository.html", "cl": 0, "ucl": 17, "cal": 17, "tl": 32, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.SiniestroRepository", "rp": "MiniSiniestros.Data_SiniestroRepository.html", "cl": 101, "ucl": 0, "cal": 101, "tl": 146, "cb": 28, "tb": 28, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.TrabajadorRepository", "rp": "MiniSiniestros.Data_TrabajadorRepository.html", "cl": 0, "ucl": 14, "cal": 14, "tl": 29, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.Repositories.Implementations.UsuarioRepository", "rp": "MiniSiniestros.Data_UsuarioRepository.html", "cl": 0, "ucl": 13, "cal": 13, "tl": 28, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-      { "name": "MiniSiniestros.Data.UnitOfWork.UoWData", "rp": "MiniSiniestros.Data_UoWData.html", "cl": 0, "ucl": 134, "cal": 134, "tl": 179, "cb": 0, "tb": 82, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
-    ]},
-  {
     "name": "MiniSiniestros.Services",
     "classes": [
       { "name": "MiniSiniestros.Services.Extensions.ServiceRegistration", "rp": "MiniSiniestros.Services_ServiceRegistration.html", "cl": 0, "ucl": 12, "cal": 12, "tl": 24, "cb": 0, "tb": 0, "cm": 0, "fcm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { } },
@@ -382,40 +341,10 @@ var riskHotspots = [
       { "value": 8, "exceeded": false },
     ]},
   {
-    "assembly": "MiniSiniestros.Data", "class": "MiniSiniestros.Data.UnitOfWork.UoWData", "reportPath": "MiniSiniestros.Data_UoWData.html", "methodName": "Dispose(System.Boolean)", "methodShortName": "Dispose(...)", "fileIndex": 0, "line": 149,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "MiniSiniestros.Data", "class": "MiniSiniestros.Data.UnitOfWork.UoWData", "reportPath": "MiniSiniestros.Data_UoWData.html", "methodName": "RollbackTransactionAsync()", "methodShortName": "RollbackTransactionAsync()", "fileIndex": 0, "line": 124,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "MiniSiniestros.Data", "class": "MiniSiniestros.Data.UnitOfWork.UoWData", "reportPath": "MiniSiniestros.Data_UoWData.html", "methodName": "Dispose(System.Boolean)", "methodShortName": "Dispose(...)", "fileIndex": 0, "line": 145,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
-    "assembly": "MiniSiniestros.Data", "class": "MiniSiniestros.Data.UnitOfWork.UoWData", "reportPath": "MiniSiniestros.Data_UoWData.html", "methodName": "RollbackTransactionAsync()", "methodShortName": "RollbackTransactionAsync()", "fileIndex": 0, "line": 120,
-    "metrics": [
-      { "value": 42, "exceeded": true },
-      { "value": 6, "exceeded": false },
-    ]},
-  {
     "assembly": "MiniSiniestros.Services", "class": "MiniSiniestros.Services.Implementations.SiniestroService", "reportPath": "MiniSiniestros.Services_SiniestroService.html", "methodName": "CreateAsync()", "methodShortName": "CreateAsync()", "fileIndex": 0, "line": 110,
     "metrics": [
       { "value": 30, "exceeded": false },
       { "value": 30, "exceeded": true },
-    ]},
-  {
-    "assembly": "MiniSiniestros.Data", "class": "MiniSiniestros.Data.Repositories.Implementations.SiniestroRepository", "reportPath": "MiniSiniestros.Data_SiniestroRepository.html", "methodName": "GetPagedAsync()", "methodShortName": "GetPagedAsync()", "fileIndex": 0, "line": 75,
-    "metrics": [
-      { "value": 28, "exceeded": false },
-      { "value": 28, "exceeded": true },
     ]},
   {
     "assembly": "MiniSiniestros.Services", "class": "MiniSiniestros.Services.Implementations.AuthService", "reportPath": "MiniSiniestros.Services_AuthService.html", "methodName": "LoginAsync()", "methodShortName": "LoginAsync()", "fileIndex": 0, "line": 32,

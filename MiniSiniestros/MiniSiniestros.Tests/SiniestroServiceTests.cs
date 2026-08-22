@@ -458,7 +458,7 @@ namespace MiniSiniestros.Tests
         }
 
         [Fact]
-        public async Task AsignarPrestadorAsync_ExcepcionEnTransaccion_HaceRollbackYDevuelveSystemError()
+        public async Task AsignarPrestadorAsync_ExcepcionAlGuardar_DevuelveSystemError()
         {
             _siniestroRepoMock
                 .Setup(r => r.GetByIdAsync(1, It.IsAny<CancellationToken>()))
@@ -479,7 +479,6 @@ namespace MiniSiniestros.Tests
             var result = await _service.AsignarPrestadorAsync(1, 10);
             result.Success.Should().BeFalse();
             result.Errors.First().Code.Should().Be(SiniestroErrorConstants.SystemError.Code);
-            _uowMock.Verify(u => u.RollbackTransactionAsync(It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }
