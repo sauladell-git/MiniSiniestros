@@ -35,6 +35,11 @@ namespace MiniSiniestros.Data.Configurations
                 .WithMany()
                 .HasForeignKey(s => s.SiniestroEstadoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne(s => s.Usuario)
+                .WithMany()
+                .HasForeignKey(s => s.UsuarioId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

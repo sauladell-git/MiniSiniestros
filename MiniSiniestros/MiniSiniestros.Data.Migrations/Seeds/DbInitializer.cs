@@ -19,7 +19,7 @@ namespace MiniSiniestros.Data.Migrations.Seeds
             var estados = new List<SiniestroEstado>
             {
                 new() { Nombre = SiniestroEstadoEnum.Recibido.ToString() },
-                new() { Nombre = SiniestroEstadoEnum.EnAnalisis.ToString() },
+                new() { Nombre = SiniestroEstadoEnum.En_Analisis.ToString() },
                 new() { Nombre = SiniestroEstadoEnum.Aprobado.ToString() },
                 new() { Nombre = SiniestroEstadoEnum.Rechazado.ToString() },
                 new() { Nombre = SiniestroEstadoEnum.Cerrado.ToString() }
@@ -186,7 +186,7 @@ namespace MiniSiniestros.Data.Migrations.Seeds
 
             // 8. Seed Siniestros
             var estadoRecibidoStr = SiniestroEstadoEnum.Recibido.ToString();
-            var estadoEnAnalisisStr = SiniestroEstadoEnum.EnAnalisis.ToString();
+            var estadoEnAnalisisStr = SiniestroEstadoEnum.En_Analisis.ToString();
             var estadoAprobadoStr = SiniestroEstadoEnum.Aprobado.ToString();
             var estadoRechazadoStr = SiniestroEstadoEnum.Rechazado.ToString();
             var estadoCerradoStr = SiniestroEstadoEnum.Cerrado.ToString();
@@ -208,47 +208,52 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 new()
                 {
                     Numero = 1001,
-                    Fecha = DateTime.UtcNow.AddDays(-15),
+                    Fecha = DateTime.UtcNow.AddDays(-90),
                     Observaciones = "Incidente reportado en planta industrial durante jornada laboral.",
                     EmpleadorId = empresaA.Id,
                     TrabajadorId = trabajadorCharly.Id,
-                    SiniestroEstadoId = estadoRecibido.Id
+                    SiniestroEstadoId = estadoRecibido.Id,
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     Numero = 1002,
-                    Fecha = DateTime.UtcNow.AddDays(-10),
+                    Fecha = DateTime.UtcNow.AddDays(-60),
                     Observaciones = "Revisión médica y peritaje en proceso por caída en oficina.",
                     EmpleadorId = empresaB.Id,
                     TrabajadorId = trabajadorCerati.Id,
-                    SiniestroEstadoId = estadoEnAnalisis.Id
+                    SiniestroEstadoId = estadoEnAnalisis.Id,
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     Numero = 1003,
-                    Fecha = DateTime.UtcNow.AddDays(-30),
+                    Fecha = DateTime.UtcNow.AddDays(-15),
                     Observaciones = "Tratamiento finalizado, alta médica otorgada y siniestro aprobado.",
                     EmpleadorId = empresaC.Id,
                     TrabajadorId = trabajadorSolari.Id,
-                    SiniestroEstadoId = estadoAprobado.Id
+                    SiniestroEstadoId = estadoAprobado.Id,
+                    UsuarioId = usuarioAdmin.Id
                 },
                 new()
                 {
                     Numero = 1004,
-                    Fecha = DateTime.UtcNow.AddDays(-60),
+                    Fecha = DateTime.UtcNow.AddDays(-10),
                     Observaciones = "Rechazado debido a inconsistencias en la documentación respaldatoria.",
                     EmpleadorId = empresaD.Id,
                     TrabajadorId = trabajadorAstor.Id,
-                    SiniestroEstadoId = estadoRechazado.Id
+                    SiniestroEstadoId = estadoRechazado.Id,
+                    UsuarioId = usuarioAdmin.Id
                 },
                 new()
                 {
                     Numero = 1005,
-                    Fecha = DateTime.UtcNow.AddDays(-90),
+                    Fecha = DateTime.UtcNow.AddDays(-5),
                     Observaciones = "Expediente cerrado tras cumplimiento de todas las prestaciones acordadas.",
                     EmpleadorId = empresaE.Id,
                     TrabajadorId = trabajadorSpinetta.Id,
-                    SiniestroEstadoId = estadoCerrado.Id
+                    SiniestroEstadoId = estadoCerrado.Id,
+                    UsuarioId = usuarioOperador.Id
                 }
             };
 
@@ -288,7 +293,8 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1001.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    Fecha = siniestro1001.Fecha
+                    Fecha = siniestro1001.Fecha,
+                    UsuarioId = usuarioOperador.Id
                 },
 
                 // Historial Siniestro 1002
@@ -296,13 +302,15 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1002.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    Fecha = siniestro1002.Fecha.AddDays(-2)
+                    Fecha = siniestro1002.Fecha.AddDays(-2),
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     SiniestroId = siniestro1002.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id,
-                    Fecha = siniestro1002.Fecha
+                    Fecha = siniestro1002.Fecha,
+                    UsuarioId = usuarioOperador.Id
                 },
 
                 // Historial Siniestro 1003
@@ -310,19 +318,22 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1003.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    Fecha = siniestro1003.Fecha.AddDays(-10)
+                    Fecha = siniestro1003.Fecha.AddDays(-10),
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     SiniestroId = siniestro1003.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id,
-                    Fecha = siniestro1003.Fecha.AddDays(-5)
+                    Fecha = siniestro1003.Fecha.AddDays(-5),
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     SiniestroId = siniestro1003.Id,
                     SiniestroEstadoId = estadoAprobado.Id,
-                    Fecha = siniestro1003.Fecha
+                    Fecha = siniestro1003.Fecha,
+                    UsuarioId = usuarioAdmin.Id
                 },
 
                 // Historial Siniestro 1004
@@ -330,19 +341,22 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1004.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    Fecha = siniestro1004.Fecha.AddDays(-10)
+                    Fecha = siniestro1004.Fecha.AddDays(-10),
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     SiniestroId = siniestro1004.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id,
-                    Fecha = siniestro1004.Fecha.AddDays(-5)
+                    Fecha = siniestro1004.Fecha.AddDays(-5),
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     SiniestroId = siniestro1004.Id,
                     SiniestroEstadoId = estadoRechazado.Id,
-                    Fecha = siniestro1004.Fecha
+                    Fecha = siniestro1004.Fecha,
+                    UsuarioId = usuarioAdmin.Id
                 },
 
                 // Historial Siniestro 1005
@@ -350,25 +364,29 @@ namespace MiniSiniestros.Data.Migrations.Seeds
                 {
                     SiniestroId = siniestro1005.Id,
                     SiniestroEstadoId = estadoRecibido.Id,
-                    Fecha = siniestro1005.Fecha.AddDays(-30)
+                    Fecha = siniestro1005.Fecha.AddDays(-30),
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     SiniestroId = siniestro1005.Id,
                     SiniestroEstadoId = estadoEnAnalisis.Id,
-                    Fecha = siniestro1005.Fecha.AddDays(-20)
+                    Fecha = siniestro1005.Fecha.AddDays(-20),
+                    UsuarioId = usuarioOperador.Id
                 },
                 new()
                 {
                     SiniestroId = siniestro1005.Id,
                     SiniestroEstadoId = estadoAprobado.Id,
-                    Fecha = siniestro1005.Fecha.AddDays(-10)
+                    Fecha = siniestro1005.Fecha.AddDays(-10),
+                    UsuarioId = usuarioAdmin.Id
                 },
                 new()
                 {
                     SiniestroId = siniestro1005.Id,
                     SiniestroEstadoId = estadoCerrado.Id,
-                    Fecha = siniestro1005.Fecha
+                    Fecha = siniestro1005.Fecha,
+                    UsuarioId = usuarioAdmin.Id
                 }
             };
 

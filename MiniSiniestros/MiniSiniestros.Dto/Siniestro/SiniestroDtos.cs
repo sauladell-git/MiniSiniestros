@@ -17,6 +17,8 @@ namespace MiniSiniestros.Dto.Siniestro
         public DateTime Fecha { get; set; }
         public int SiniestroEstadoId { get; set; }
         public string SiniestroEstadoNombre { get; set; } = string.Empty;
+        public int? UsuarioId { get; set; }
+        public string? UsuarioNombre { get; set; }
     }
 
     public class SiniestroDto
@@ -29,6 +31,8 @@ namespace MiniSiniestros.Dto.Siniestro
         public EmpleadorDto? Empleador { get; set; }
         public TrabajadorDto? Trabajador { get; set; }
         public SiniestroEstadoDto? SiniestroEstado { get; set; }
+        public int? UsuarioId { get; set; }
+        public string? UsuarioNombre { get; set; }
 
         public List<PrestadorDto> Prestadores { get; set; } = new();
         public List<SiniestroEstadoHistorialDto> HistorialEstados { get; set; } = new();
@@ -37,16 +41,16 @@ namespace MiniSiniestros.Dto.Siniestro
 
     public class CreateSiniestroDto
     {
-  
-
         public string CuilEmpleador { get; set; } = string.Empty;
         public string CuilTrabajador { get; set; } = string.Empty;
         public string Observaciones { get; set; } = string.Empty;
+        public int? UsuarioId { get; set; }
     }
 
     public class CambiarEstadoSiniestroDto
     {
         public int NuevoEstadoId { get; set; }
+        public int? UsuarioId { get; set; }
     }
 
     public class AsignarPrestadorSiniestroDto

@@ -26,10 +26,12 @@ namespace MiniSiniestros.Services.Profiles
 
             // SiniestroEstadoHistorial 
             CreateMap<SiniestroEstadoHistorial, SiniestroEstadoHistorialDto>()
-                .ForMember(dest => dest.SiniestroEstadoNombre, opt => opt.MapFrom(src => src.SiniestroEstado != null ? src.SiniestroEstado.Nombre : string.Empty));
+                .ForMember(dest => dest.SiniestroEstadoNombre, opt => opt.MapFrom(src => src.SiniestroEstado != null ? src.SiniestroEstado.Nombre : string.Empty))
+                .ForMember(dest => dest.UsuarioNombre, opt => opt.MapFrom(src => src.Usuario != null ? $"{src.Usuario.Nombre} {src.Usuario.Apellido}".Trim() : null));
 
             // Siniestro
             CreateMap<Siniestro, SiniestroDto>()
+                .ForMember(dest => dest.UsuarioNombre, opt => opt.MapFrom(src => src.Usuario != null ? $"{src.Usuario.Nombre} {src.Usuario.Apellido}".Trim() : null))
                 .ForMember(dest => dest.Prestadores, opt => opt.Ignore())
                 .ForMember(dest => dest.HistorialEstados, opt => opt.Ignore());
 

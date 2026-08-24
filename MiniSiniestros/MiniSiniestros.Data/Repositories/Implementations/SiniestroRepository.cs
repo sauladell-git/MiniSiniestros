@@ -18,6 +18,7 @@ namespace MiniSiniestros.Data.Repositories.Implementations
                 .Include(s => s.Empleador)
                 .Include(s => s.Trabajador)
                 .Include(s => s.SiniestroEstado)
+                .Include(s => s.Usuario)
                 .FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
         }
 
@@ -28,6 +29,7 @@ namespace MiniSiniestros.Data.Repositories.Implementations
                 .Include(s => s.Empleador)
                 .Include(s => s.Trabajador)
                 .Include(s => s.SiniestroEstado)
+                .Include(s => s.Usuario)
                 .ToListAsync(cancellationToken);
         }
 
@@ -37,6 +39,7 @@ namespace MiniSiniestros.Data.Repositories.Implementations
                 .AsNoTracking()
                 .Include(s => s.Trabajador)
                 .Include(s => s.SiniestroEstado)
+                .Include(s => s.Usuario)
                 .Where(s => s.EmpleadorId == empleadorId)
                 .ToListAsync(cancellationToken);
         }
@@ -47,6 +50,7 @@ namespace MiniSiniestros.Data.Repositories.Implementations
                 .AsNoTracking()
                 .Include(s => s.Empleador)
                 .Include(s => s.SiniestroEstado)
+                .Include(s => s.Usuario)
                 .Where(s => s.TrabajadorId == trabajadorId)
                 .ToListAsync(cancellationToken);
         }
@@ -57,6 +61,7 @@ namespace MiniSiniestros.Data.Repositories.Implementations
                 .AsNoTracking()
                 .Include(s => s.Empleador)
                 .Include(s => s.Trabajador)
+                .Include(s => s.Usuario)
                 .Where(s => s.SiniestroEstadoId == estadoId)
                 .ToListAsync(cancellationToken);
         }
@@ -78,6 +83,7 @@ namespace MiniSiniestros.Data.Repositories.Implementations
                 .Include(s => s.Empleador)
                 .Include(s => s.Trabajador)
                 .Include(s => s.SiniestroEstado)
+                .Include(s => s.Usuario)
                 .AsQueryable();
 
             // 1. Filtrar por CUIT de Empleador

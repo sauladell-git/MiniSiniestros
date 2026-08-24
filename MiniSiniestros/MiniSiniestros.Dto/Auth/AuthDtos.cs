@@ -15,4 +15,12 @@ namespace MiniSiniestros.Dto.Auth
         public string Apellido { get; set; } = string.Empty;
         public List<string> Roles { get; set; } = new();
     }
+
+    public class UsuarioDto
+    {
+        public int Id { get; set; }
+        public string Nombre { get; set; } = string.Empty;
+        public string Apellido { get; set; } = string.Empty;
+        public List<string> Roles { get; set; } = new();
+    }
 }

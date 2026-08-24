@@ -24,5 +24,13 @@ namespace MiniSiniestros.Data.Repositories.Implementations
                     .ThenInclude(ur => ur.Rol)
                 .FirstOrDefaultAsync(u => u.Nombre == nombre, cancellationToken);
         }
+
+        public async Task<Usuario?> GetByIdConRolesAsync(int id, CancellationToken cancellationToken = default)
+        {
+            return await _dbSet
+                .Include(u => u.UsuarioRoles)
+                    .ThenInclude(ur => ur.Rol)
+                .FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        }
     }
 }

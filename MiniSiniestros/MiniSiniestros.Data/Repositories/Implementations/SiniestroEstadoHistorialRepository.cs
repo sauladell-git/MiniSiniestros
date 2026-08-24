@@ -16,6 +16,7 @@ namespace MiniSiniestros.Data.Repositories.Implementations
             return await _dbSet
                 .AsNoTracking()
                 .Include(h => h.SiniestroEstado)
+                .Include(h => h.Usuario)
                 .Where(h => h.SiniestroId == siniestroId)
                 .OrderByDescending(h => h.Fecha)
                 .ToListAsync(cancellationToken);
