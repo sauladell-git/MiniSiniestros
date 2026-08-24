@@ -141,8 +141,6 @@ Esta sección documenta las decisiones de diseño, compromisos (*trade-offs*) y 
 > **Estructura del Proyecto y Separación de Responsabilidades**
 > Además de la estructura solicitada, se introdujo un proyecto `Common` para centralizar enumeradores y clases transversales. En la capa de servicios, se optó por una estricta separación por dominios. Aunque el requerimiento base permitía recuperar los datos directamente mediante Inversión de Control (IoW), se tomó la decisión arquitectónica de separar las responsabilidades para garantizar la escalabilidad y mantenibilidad futura del sistema.
 
-
-
 > [!NOTE]
 > **Estrategia de Autenticación, Autorización y Trazabilidad (Feature Opcional Implementado)**
 > Aunque este punto era un requerimiento opcional dentro del challenge, se decidió implementarlo para entregar una solución robusta, segura y auditable. Se desarrolló un sistema basado en tokens JWT (JSON Web Tokens), validación de roles y políticas de acceso, entregando 3 perfiles de usuario preconfigurados (`Admin`, `Operador`, `Analista`). Adicionalmente, el sistema extrae automáticamente el `UsuarioId` desde las *claims* del JWT (`NameIdentifier` / `sub`) en las peticiones HTTP y valida su existencia mediante `IUsuarioService`, registrando e identificando al operador responsable tanto en la creación del siniestro (`Siniestro`) como en cada transición de estado (`SiniestroEstadoHistorial`) para una completa trazabilidad de auditoría.
@@ -153,7 +151,11 @@ Esta sección documenta las decisiones de diseño, compromisos (*trade-offs*) y 
 
 > [!NOTE]
 > **Estrategia de Pruebas Unitarias y Cobertura**
-> Si bien se desarrollaron pruebas unitarias para otros proyectos dentro de la solución, el **reporte final de cobertura** fue configurado para evaluar de manera exclusiva el *Core* del Negocio (Capa de Servicios) y los contratos de entrada/salida (API). Esta decisión técnica busca aislar la infraestructura para medir con precisión la calidad de la lógica central. Bajo este alcance específico, el reporte arroja un **74% de Line Coverage** y un sólido **62% de Branch Coverage**, garantizando la estabilidad de las reglas de negocio críticas y el correcto manejo de excepciones lógicas.
+> Si bien se desarrollaron pruebas unitarias para otros proyectos dentro de la solución, el **reporte final de cobertura** fue configurado para evaluar de manera exclusiva el *Core* del Negocio (Capa de Servicios) y los contratos de entrada/salida (API). Esta decisión técnica busca aislar la infraestructura para medir con precisión la calidad de la lógica central. Bajo este alcance específico, el reporte arroja un **77% de Line Coverage** y un sólido **65% de Branch Coverage**, garantizando la estabilidad de las reglas de negocio críticas y el correcto manejo de excepciones lógicas.
+
+> [!NOTE]
+> **Estrategia de Versionado (GitFlow y PRs)**
+> Se adoptó un enfoque de desarrollo incremental. A medida que la solución creció, el trabajo se organizó mediante *Feature Branches* separadas por módulos (API, Web, SRT, JWT, Documentación, etc.). La integración se realizó mediante *Pull Requests* (PRs) agrupados lógicamente, asegurando que cada funcionalidad integrada estuviera respaldada por sus respectivos tests unitarios en la capa de negocio.
 
 > [!NOTE]
 > **Uso de IA como Herramienta de Productividad**
@@ -161,10 +163,6 @@ Esta sección documenta las decisiones de diseño, compromisos (*trade-offs*) y 
 > *   Generación base de los primeros tests unitarios en la capa de negocio y asistencia en la redacción de esta documentación (mediante agentes configurados previamente a la prueba).
 > *   Generación de los archivos `.yml` para el CI/CD (GitHub Actions) y actualización iterativa del `docker-compose.yml` para el despliegue.
 > *   Creación rápida de las vistas web basadas en los *ViewModels* preexistentes, asumiendo que el objetivo central de la prueba técnica reside en la arquitectura, la lógica de negocio y las integraciones, no en el diseño Front-End.
-
-> [!NOTE]
-> **Estrategia de Versionado (GitFlow y PRs)**
-> Se adoptó un enfoque de desarrollo incremental. A medida que la solución creció, el trabajo se organizó mediante *Feature Branches* separadas por módulos (API, Web, SRT, JWT, Documentación, etc.). La integración se realizó mediante *Pull Requests* (PRs) agrupados lógicamente, asegurando que cada funcionalidad integrada estuviera respaldada por sus respectivos tests unitarios en la capa de negocio.
 
 ---
 
