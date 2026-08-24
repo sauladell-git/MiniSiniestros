@@ -6,5 +6,6 @@ namespace MiniSiniestros.Data.Repositories.Interfaces
     {
         Task<Usuario?> GetByNombreYApellidoAsync(string nombre, string apellido, CancellationToken cancellationToken = default);
         Task<Usuario?> GetByNombreConRolesAsync(string nombre, CancellationToken cancellationToken = default);
+        Task<Usuario?> GetByIdConRolesAsync(int id, CancellationToken cancellationToken = default);
     }
 }

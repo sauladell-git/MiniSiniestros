@@ -110,7 +110,8 @@ namespace MiniSiniestros.Web.Services
                     TrabajadorNombreCompleto = d.Trabajador != null ? $"{d.Trabajador.Nombre} {d.Trabajador.Apellido}".Trim() : string.Empty,
                     TrabajadorCuil = d.Trabajador?.Cuil ?? string.Empty,
                     EstadoNombre = d.SiniestroEstado?.Nombre ?? string.Empty,
-                    SiniestroEstadoId = d.SiniestroEstado?.Id ?? 0
+                    SiniestroEstadoId = d.SiniestroEstado?.Id ?? 0,
+                    UsuarioNombre = d.UsuarioNombre
                 }).ToList();
 
                 var pagedResponseVm = new PagedResponse<SiniestroItemViewModel>(
@@ -169,6 +170,8 @@ namespace MiniSiniestros.Web.Services
                     Empleador = dto.Empleador,
                     Trabajador = dto.Trabajador,
                     SiniestroEstado = dto.SiniestroEstado,
+                    UsuarioId = dto.UsuarioId,
+                    UsuarioNombre = dto.UsuarioNombre,
                     Prestadores = dto.Prestadores?.ToList() ?? new List<PrestadorDto>(),
                     HistorialEstados = dto.HistorialEstados?.ToList() ?? new List<SiniestroEstadoHistorialDto>(),
                     NotificacionesSRT = dto.NotificacionesSRT?.ToList() ?? new List<NotificacionSrtDto>()

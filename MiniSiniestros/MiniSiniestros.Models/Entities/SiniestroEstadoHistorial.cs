@@ -8,6 +8,7 @@ namespace MiniSiniestros.Entities
         public Siniestro Siniestro { get; set; } = null!;
         public int SiniestroEstadoId { get; set; }
         public SiniestroEstado SiniestroEstado { get; set; } = null!;
- 
+        public int? UsuarioId { get; set; }
+        public Usuario? Usuario { get; set; }
     }
 }

@@ -25,6 +25,7 @@ namespace MiniSiniestros.Services.Implementations
         private readonly ISiniestroEstadoService _siniestroEstadoService;
         private readonly IPrestadorService _prestadorService;
         private readonly IStrNotificationService _strNotificationService;
+        private readonly IUsuarioService _usuarioService;
 
         public SiniestroService(
             IUoWData unitOfWork,
@@ -34,7 +35,8 @@ namespace MiniSiniestros.Services.Implementations
             ITrabajadorService trabajadorService,
             ISiniestroEstadoService siniestroEstadoService,
             IPrestadorService prestadorService,
-            IStrNotificationService strNotificationService)
+            IStrNotificationService strNotificationService,
+            IUsuarioService usuarioService)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
@@ -44,6 +46,7 @@ namespace MiniSiniestros.Services.Implementations
             _siniestroEstadoService = siniestroEstadoService ?? throw new ArgumentNullException(nameof(siniestroEstadoService));
             _prestadorService = prestadorService ?? throw new ArgumentNullException(nameof(prestadorService));
             _strNotificationService = strNotificationService ?? throw new ArgumentNullException(nameof(strNotificationService));
+            _usuarioService = usuarioService ?? throw new ArgumentNullException(nameof(usuarioService));
         }
 
         public async Task<ServiceResponse<IReadOnlyList<SiniestroDto>>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -126,6 +129,17 @@ namespace MiniSiniestros.Services.Implementations
                 return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.CuilInvalido);
             }
 
+            // Validar existencia de UsuarioId si fue especificado
+            if (dto.UsuarioId.HasValue && dto.UsuarioId.Value > 0)
+            {
+                var usuarioRes = await _usuarioService.GetByIdAsync(dto.UsuarioId.Value, cancellationToken);
+                if (!usuarioRes.Success || usuarioRes.Data == null)
+                {
+                    _logger.LogWarning("Validación fallida: El usuario especificado con ID {UsuarioId} no existe.", dto.UsuarioId.Value);
+                    return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.UsuarioNotFound);
+                }
+            }
+
             // 1. Obtener Empleador por CUIT desde IEmpleadorService
             var empleadorRes = await _empleadorService.GetByCuitAsync(cuitClean, cancellationToken);
             if (!empleadorRes.Success || empleadorRes.Data == null)
@@ -152,7 +166,6 @@ namespace MiniSiniestros.Services.Implementations
                 return ServiceResponse<SiniestroDto>.Fail(SiniestroErrorConstants.TrabajadorNoPerteneceAEmpleador);
             }
 
-
             await using var transaction = await _unitOfWork.BeginTransactionAsync(cancellationToken);
 
             try
@@ -162,6 +175,7 @@ namespace MiniSiniestros.Services.Implementations
                 siniestro.TrabajadorId = trabajador.Id;
                 siniestro.Fecha = System.DateTime.Now;
                 siniestro.SiniestroEstadoId = (int)SiniestroEstadoEnum.Recibido;
+                siniestro.UsuarioId = dto.UsuarioId;
 
                 // Calcular automáticamente el número como el último número + 1
                 var ultimoNumero = await _unitOfWork.Siniestros.GetUltimoNumeroAsync(cancellationToken);
@@ -170,14 +184,13 @@ namespace MiniSiniestros.Services.Implementations
                 await _unitOfWork.Siniestros.AddAsync(siniestro, cancellationToken);
                 await _unitOfWork.CompleteAsync(cancellationToken);
 
-                
-
                 // Registrar historial inicial
                 await _unitOfWork.SiniestroEstadoHistoriales.AddAsync(new SiniestroEstadoHistorial
                 {
                     SiniestroId = siniestro.Id,
                     SiniestroEstadoId = (int)SiniestroEstadoEnum.Recibido,
-                    Fecha = DateTime.UtcNow
+                    Fecha = DateTime.UtcNow,
+                    UsuarioId = dto.UsuarioId
                 }, cancellationToken);
 
                 await _unitOfWork.CommitTransactionAsync(cancellationToken);
@@ -194,9 +207,20 @@ namespace MiniSiniestros.Services.Implementations
             }
         }
 
-        public async Task<ServiceResponse<bool>> CambiarEstadoAsync(int siniestroId, int nuevoEstadoId, CancellationToken cancellationToken = default)
+        public async Task<ServiceResponse<bool>> CambiarEstadoAsync(int siniestroId, int nuevoEstadoId, int? usuarioId = null, CancellationToken cancellationToken = default)
         {
             _logger.LogInformation("Solicitud de cambio de estado recibida para Siniestro ID {SiniestroId} al Estado ID {NuevoEstadoId}", siniestroId, nuevoEstadoId);
+
+            // Validar existencia de UsuarioId si fue especificado
+            if (usuarioId.HasValue && usuarioId.Value > 0)
+            {
+                var usuarioRes = await _usuarioService.GetByIdAsync(usuarioId.Value, cancellationToken);
+                if (!usuarioRes.Success || usuarioRes.Data == null)
+                {
+                    _logger.LogWarning("Cambio de estado rechazado: El usuario especificado con ID {UsuarioId} no existe.", usuarioId.Value);
+                    return ServiceResponse<bool>.Fail(SiniestroErrorConstants.UsuarioNotFound);
+                }
+            }
 
             // 1. Validar que el nuevo estado exista usando ISiniestroEstadoService
             var estadoValidoRes = await _siniestroEstadoService.ExisteEstadoAsync(nuevoEstadoId, cancellationToken);
@@ -223,6 +247,10 @@ namespace MiniSiniestros.Services.Implementations
             {
                 // 3. Actualizar estado del siniestro
                 siniestro.SiniestroEstadoId = nuevoEstadoId;
+                if (usuarioId.HasValue && usuarioId.Value > 0)
+                {
+                    siniestro.UsuarioId = usuarioId.Value;
+                }
                 _unitOfWork.Siniestros.Update(siniestro);
 
                 // 4. Registrar en el historial de estados
@@ -230,7 +258,8 @@ namespace MiniSiniestros.Services.Implementations
                 {
                     SiniestroId = siniestroId,
                     SiniestroEstadoId = nuevoEstadoId,
-                    Fecha = DateTime.UtcNow
+                    Fecha = DateTime.UtcNow,
+                    UsuarioId = usuarioId
                 };
 
                 await _unitOfWork.SiniestroEstadoHistoriales.AddAsync(historial, cancellationToken);

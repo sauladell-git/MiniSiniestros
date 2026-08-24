@@ -128,7 +128,7 @@ namespace MiniSiniestros.Tests
             // Arrange
             var dto = new CambiarEstadoSiniestroDto { NuevoEstadoId = 2 };
             _serviceMock
-                .Setup(s => s.CambiarEstadoAsync(1, 2, It.IsAny<CancellationToken>()))
+                .Setup(s => s.CambiarEstadoAsync(1, 2, It.IsAny<int?>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ServiceResponse<bool>.Ok(true));
 
             // Act
@@ -146,7 +146,7 @@ namespace MiniSiniestros.Tests
             // Arrange
             var dto = new CambiarEstadoSiniestroDto { NuevoEstadoId = 99 };
             _serviceMock
-                .Setup(s => s.CambiarEstadoAsync(1, 99, It.IsAny<CancellationToken>()))
+                .Setup(s => s.CambiarEstadoAsync(1, 99, It.IsAny<int?>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ServiceResponse<bool>.Fail(SiniestroErrorConstants.EstadoNoDisponible));
 
             // Act

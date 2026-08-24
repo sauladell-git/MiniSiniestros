@@ -3,13 +3,13 @@
 @{
     ViewData["Title"] = $"Detalle del Siniestro #{Model.Numero}";
     
-    var badgeClass = Model.SiniestroEstado?.Id switch
+    var badgeClass = (Model.SiniestroEstado != null ? (SiniestroEstadoEnum)Model.SiniestroEstado.Id : (SiniestroEstadoEnum?)null) switch
     {
-        1 => "bg-info text-dark",       // Recibido
-        2 => "bg-warning text-dark",    // EnAnalisis
-        3 => "bg-success text-white",   // Aprobado
-        4 => "bg-danger text-white",    // Rechazado
-        5 => "bg-secondary text-white", // Cerrado
+        SiniestroEstadoEnum.Recibido => "bg-info text-dark",
+        SiniestroEstadoEnum.En_Analisis => "bg-warning text-dark",
+        SiniestroEstadoEnum.Aprobado => "bg-success text-white",
+        SiniestroEstadoEnum.Rechazado => "bg-danger text-white",
+        SiniestroEstadoEnum.Cerrado => "bg-secondary text-white",
         _ => "bg-dark text-white"
     };
 }
@@ -56,6 +56,12 @@
                         <dt class="col-sm-4 text-muted">Estado Actual:</dt>
                         <dd class="col-sm-8">
                             <span class="badge @badgeClass px-2 py-1">@Model.SiniestroEstado?.Nombre</span>
+                        </dd>
+
+                        <dt class="col-sm-4 text-muted">Cargado Por:</dt>
+                        <dd class="col-sm-8 fw-bold text-dark">
+                            <i class="bi bi-person-check-fill me-1 text-primary"></i>
+                            @(string.IsNullOrWhiteSpace(Model.UsuarioNombre) ? "Usuario Sistema" : Model.UsuarioNombre)
                         </dd>
 
                         <dt class="col-sm-4 text-muted">Observaciones:</dt>
@@ -173,6 +179,7 @@
                                     <tr>
                                         <th>Fecha y Hora</th>
                                         <th>Estado Alcanzado</th>
+                                        <th>Operador / Usuario</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -184,6 +191,12 @@
                                                 <span class="badge bg-secondary px-2 py-1">
                                                     @h.SiniestroEstadoNombre
                                                 </span>
+                                            </td>
+                                            <td>
+                                                <small class="fw-semibold text-dark">
+                                                    <i class="bi bi-person me-1 text-muted"></i>
+                                                    @(string.IsNullOrWhiteSpace(h.UsuarioNombre) ? "Usuario Sistema" : h.UsuarioNombre)
+                                                </small>
                                             </td>
                                         </tr>
                                     }
@@ -219,7 +232,7 @@
                                     <tr>
                                         <th>Fecha y Hora</th>
                                         <th>Estado / Status</th>
-                                        <th>Intentos Polly</th>
+                                        <th>Intentos</th>
                                         <th>Payload</th>
                                     </tr>
                                 </thead>

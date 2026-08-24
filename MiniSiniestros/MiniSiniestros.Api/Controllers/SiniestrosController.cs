@@ -110,6 +110,7 @@ namespace MiniSiniestros.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<ServiceResponse<SiniestroDto>>> Create([FromBody] CreateSiniestroDto dto, CancellationToken cancellationToken)
         {
+            dto.UsuarioId ??= GetCurrentUserId();
             var response = await _siniestroService.CreateAsync(dto, cancellationToken);
             if (!response.Success)
             {
@@ -152,13 +153,26 @@ namespace MiniSiniestros.Api.Controllers
         [ProducesResponseType(StatusCodes.Status403Forbidden)]
         public async Task<ActionResult<ServiceResponse<bool>>> CambiarEstado(int id, [FromBody] CambiarEstadoSiniestroDto dto, CancellationToken cancellationToken)
         {
-            var response = await _siniestroService.CambiarEstadoAsync(id, dto.NuevoEstadoId, cancellationToken);
+            var usuarioId = dto.UsuarioId ?? GetCurrentUserId();
+            var response = await _siniestroService.CambiarEstadoAsync(id, dto.NuevoEstadoId, usuarioId, cancellationToken);
             if (!response.Success)
             {
                 return BadRequest(response);
             }
 
             return Ok(response);
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var claim = User?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier) 
+                     ?? User?.FindFirst("id") 
+                     ?? User?.FindFirst("sub");
+            if (claim != null && int.TryParse(claim.Value, out var userId))
+            {
+                return userId;
+            }
+            return null;
         }
 
         /// <summary>

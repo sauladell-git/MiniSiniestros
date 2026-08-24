@@ -34,6 +34,103 @@ graph TD
 | **`MiniSiniestros.SrtMock`** | Web API (.NET 8) | Servicio simulado (Mock HTTP) para probar el envío síncrono/asíncrono de notificaciones a la SRT. |
 | **`MiniSiniestros.Tests`** | Proyecto de Pruebas | Pruebas unitarias automatizadas con **xUnit**, **Moq**, **EF Core In-Memory** y **FluentAssertions** (87 tests pasando al 100%). |
 
+### 🛢️ Diagrama Entidad-Relación (DER)
+
+A continuación se detalla el modelo de datos relacional derivado de las entidades de dominio (`MiniSiniestros.Entities`):
+
+```mermaid
+erDiagram
+    Empleador ||--o{ Trabajador : "emplea"
+    Empleador ||--o{ Siniestro : "registra"
+    Trabajador ||--o{ Siniestro : "sufre"
+    SiniestroEstado ||--o{ Siniestro : "define estado"
+    Usuario ||--o{ Siniestro : "crea"
+    Siniestro ||--o{ SiniestroEstadoHistorial : "registra historial"
+    SiniestroEstado ||--o{ SiniestroEstadoHistorial : "aplica a historial"
+    Usuario ||--o{ SiniestroEstadoHistorial : "realiza cambio"
+    Siniestro ||--o{ Siniestro_Prestador : "asigna"
+    Prestador ||--o{ Siniestro_Prestador : "atiende"
+    Siniestro ||--o{ NotificacionSRT : "genera"
+    Usuario ||--o{ Usuario_Rol : "posee"
+    Rol ||--o{ Usuario_Rol : "pertenece"
+
+    Empleador {
+        int Id PK
+        string RazonSocial
+        string Cuit
+    }
+
+    Trabajador {
+        int Id PK
+        string Nombre
+        string Apellido
+        string Cuil
+        int EmpleadorId FK
+    }
+
+    Siniestro {
+        int Id PK
+        int Numero
+        datetime Fecha
+        string Observaciones
+        int EmpleadorId FK
+        int TrabajadorId FK
+        int SiniestroEstadoId FK
+        int UsuarioId FK
+    }
+
+    SiniestroEstado {
+        int Id PK
+        string Nombre
+    }
+
+    SiniestroEstadoHistorial {
+        int Id PK
+        datetime Fecha
+        int SiniestroId FK
+        int SiniestroEstadoId FK
+        int UsuarioId FK
+    }
+
+    Prestador {
+        int Id PK
+        string Nombre
+    }
+
+    Siniestro_Prestador {
+        int Id PK
+        int SiniestroId FK
+        int PrestadorId FK
+    }
+
+    NotificacionSRT {
+        int Id PK
+        int SiniestroId FK
+        datetime Timestamp
+        string Status
+        string Payload
+        int Intentos
+    }
+
+    Usuario {
+        int Id PK
+        string Nombre
+        string Apellido
+        string Password
+    }
+
+    Rol {
+        int Id PK
+        string Nombre
+        string Descripcion
+    }
+
+    Usuario_Rol {
+        int UsuarioId PK, FK
+        int RolId PK, FK
+    }
+```
+
 ---
 
 ## 🧠 2. Decisiones de Arquitectura, Trade-offs y Racional Técnico
@@ -44,13 +141,15 @@ Esta sección documenta las decisiones de diseño, compromisos (*trade-offs*) y 
 > **Estructura del Proyecto y Separación de Responsabilidades**
 > Además de la estructura solicitada, se introdujo un proyecto `Common` para centralizar enumeradores y clases transversales. En la capa de servicios, se optó por una estricta separación por dominios. Aunque el requerimiento base permitía recuperar los datos directamente mediante Inversión de Control (IoW), se tomó la decisión arquitectónica de separar las responsabilidades para garantizar la escalabilidad y mantenibilidad futura del sistema.
 
+
+
 > [!NOTE]
-> **Estrategia de Autenticación y Autorización (Feature Opcional Implementado)**
-> Aunque este punto era un requerimiento opcional dentro del challenge, se decidió implementarlo para entregar una solución robusta y segura. Se desarrolló un sistema basado en tokens JWT (JSON Web Tokens), validación de roles y políticas de acceso. El sistema se entrega con 3 perfiles de usuario pre-configurados para facilitar a los evaluadores la prueba de los distintos niveles de privilegio, tanto en la WebAPI como en el cliente Web.
+> **Estrategia de Autenticación, Autorización y Trazabilidad (Feature Opcional Implementado)**
+> Aunque este punto era un requerimiento opcional dentro del challenge, se decidió implementarlo para entregar una solución robusta, segura y auditable. Se desarrolló un sistema basado en tokens JWT (JSON Web Tokens), validación de roles y políticas de acceso, entregando 3 perfiles de usuario preconfigurados (`Admin`, `Operador`, `Analista`). Adicionalmente, el sistema extrae automáticamente el `UsuarioId` desde las *claims* del JWT (`NameIdentifier` / `sub`) en las peticiones HTTP y valida su existencia mediante `IUsuarioService`, registrando e identificando al operador responsable tanto en la creación del siniestro (`Siniestro`) como en cada transición de estado (`SiniestroEstadoHistorial`) para una completa trazabilidad de auditoría.
 
 > [!NOTE]
 > **Resiliencia e Integración con Terceros - SRT (Feature Opcional Implementado)**
-> Asumiendo el desafío opcional propuesto, se diseñó una integración tolerante a fallos. Para evaluar el comportamiento del sistema, se desarrolló un *mock* del servicio externo (SRT) que simula un porcentaje aleatorio de caídas. Para mitigar esta inestabilidad, se implementaron patrones de resiliencia que garantizan que el sistema no colapse ante cortes de red. Adicionalmente, se incluyó el logueo en base de datos del *payload* correspondiente para asegurar una correcta auditoría y trazabilidad.
+> Asumiendo el desafío opcional propuesto, se diseñó una integración tolerante a fallos. Para evaluar el comportamiento del sistema, se desarrolló un *mock* del servicio externo (SRT) que simula un porcentaje aleatorio de caídas. Para mitigar esta inestabilidad, se implementaron patrones de resiliencia (Polly v8) que garantizan que el sistema no colapse ante cortes de red. Adicionalmente, se incluyó el logueo en base de datos del *payload* y del resultado técnico en la tabla `NotificacionSRT`. Para esta auditoría se adoptó el patrón *Event Audit Log*, almacenando el `Status` como texto directo (ej: `"ENTREGADO_OK"`, `"CIRCUITO_ABIERTO"`, `"TIMEOUT_EXCEDIDO"`) para preservar la fidelidad histórica inalterable de cada intento de transmisión sin introducir *joins* relacionales innecesarios contra tablas de catálogo secundarias.
 
 > [!NOTE]
 > **Estrategia de Pruebas Unitarias y Cobertura**
@@ -217,14 +316,17 @@ La comunicación HTTP con el servicio externo de la SRT (`SrtNotificationClient`
 ---
 
 ## 📋 10. Normas de Dominio e Integridad de Datos
-
 - **Formato Estricto de CUIT y CUIL**:
   - Tanto el CUIT del Empleador como el CUIL del Trabajador se validan estrictamente mediante la expresión regular `^\d{11}$` (**exclusivamente 11 dígitos numéricos sin guiones**).
+- **Numeración Secuencial Autogenerada**:
+  - El número único de siniestro (`Numero`) se calcula de forma automática en el servidor (`Último Número + 1`) dentro de una transacción atómica de base de datos (`IDbContextTransaction`) para evitar condiciones de carrera (*race conditions*).
 - **Flujo de Estados de Siniestro**:
-  - `Recibido` $\rightarrow$ `EnProceso` $\rightarrow$ `Aceptado` / `Rechazado` $\rightarrow$ `Finalizado`.
-  - El cambio de estado registra automáticamente un historial con timestamp en `SiniestroEstadoHistorial`.
+  - `Recibido` (1) $\rightarrow$ `En_Analisis` (2) $\rightarrow$ `Aprobado` (3) / `Rechazado` (4) $\rightarrow$ `Cerrado` (5).
+  - Cada cambio de estado valida la existencia del estado destino y registra automáticamente un historial con *timestamp* y `UsuarioId` en `SiniestroEstadoHistorial`.
+- **Trazabilidad de Usuarios (`UsuarioId`)**:
+  - Tanto en la creación del siniestro como en cada transición de estado se registra el `UsuarioId` responsable (extraído automáticamente del token JWT), validando la existencia del usuario mediante `IUsuarioService`.
 - **Notificación a la SRT**:
-  - Al cambiar de estado a `Aprobado`, se notifica al servicio de la SRT y se registra la auditoría en `NotificacionesSRT`.
+  - Al cambiar el estado a `Aprobado`, se notifica al servicio de la SRT mediante políticas de resiliencia (Polly v8) y se registra la auditoría de *payload* y resultado técnico (*Status*) en `NotificacionSRT`.
 
 ---
 

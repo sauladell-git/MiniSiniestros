@@ -7,6 +7,7 @@ using MiniSiniestros.Common.Enums;
 using MiniSiniestros.Common.Responses;
 using MiniSiniestros.Data.Repositories.Interfaces;
 using MiniSiniestros.Data.UnitOfWork;
+using MiniSiniestros.Dto.Auth;
 using MiniSiniestros.Dto.Empleador;
 using MiniSiniestros.Dto.Prestador;
 using MiniSiniestros.Dto.Siniestro;
@@ -30,6 +31,7 @@ namespace MiniSiniestros.Tests
         private readonly Mock<ISiniestroEstadoService> _siniestroEstadoServiceMock;
         private readonly Mock<IPrestadorService> _prestadorServiceMock;
         private readonly Mock<IStrNotificationService> _strNotificationServiceMock;
+        private readonly Mock<IUsuarioService> _usuarioServiceMock;
 
         private readonly Mock<ISiniestroRepository> _siniestroRepoMock;
         private readonly Mock<ISiniestroEstadoHistorialRepository> _historialRepoMock;
@@ -49,6 +51,7 @@ namespace MiniSiniestros.Tests
             _siniestroEstadoServiceMock = new Mock<ISiniestroEstadoService>();
             _prestadorServiceMock = new Mock<IPrestadorService>();
             _strNotificationServiceMock = new Mock<IStrNotificationService>();
+            _usuarioServiceMock = new Mock<IUsuarioService>();
 
             _siniestroRepoMock = new Mock<ISiniestroRepository>();
             _historialRepoMock = new Mock<ISiniestroEstadoHistorialRepository>();
@@ -69,6 +72,10 @@ namespace MiniSiniestros.Tests
                 .Setup(s => s.GetBySiniestroIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ServiceResponse<IReadOnlyList<NotificacionSrtDto>>.Ok(new List<NotificacionSrtDto>()));
 
+            _usuarioServiceMock
+                .Setup(u => u.GetByIdAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync((int id, CancellationToken ct) => ServiceResponse<UsuarioDto>.Ok(new UsuarioDto { Id = id, Nombre = "UserTest" }));
+
             _uowMock.Setup(u => u.BeginTransactionAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(_transactionMock.Object);
 
@@ -80,7 +87,8 @@ namespace MiniSiniestros.Tests
                 _trabajadorServiceMock.Object,
                 _siniestroEstadoServiceMock.Object,
                 _prestadorServiceMock.Object,
-                _strNotificationServiceMock.Object);
+                _strNotificationServiceMock.Object,
+                _usuarioServiceMock.Object);
         }
 
         [Theory]
@@ -111,6 +119,20 @@ namespace MiniSiniestros.Tests
             var result = await _service.CreateAsync(dto);
             result.Success.Should().BeFalse();
             result.Errors.First().Code.Should().Be(SiniestroErrorConstants.CuilInvalido.Code);
+        }
+
+        [Fact]
+        public async Task CreateAsync_UsuarioInexistente_DevuelveUsuarioNotFoundError()
+        {
+            var dto = new CreateSiniestroDto { CuilEmpleador = "30111111111", CuilTrabajador = "20111111111", UsuarioId = 99 };
+
+            _usuarioServiceMock
+                .Setup(u => u.GetByIdAsync(99, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ServiceResponse<UsuarioDto>.Fail(SiniestroErrorConstants.UsuarioNotFound));
+
+            var result = await _service.CreateAsync(dto);
+            result.Success.Should().BeFalse();
+            result.Errors.First().Code.Should().Be(SiniestroErrorConstants.UsuarioNotFound.Code);
         }
 
         [Fact]
@@ -299,6 +321,18 @@ namespace MiniSiniestros.Tests
             var result = await _service.GetByIdAsync(1);
             result.Success.Should().BeTrue();
             result.Data!.Id.Should().Be(1);
+        }
+
+        [Fact]
+        public async Task CambiarEstadoAsync_UsuarioInexistente_DevuelveUsuarioNotFoundError()
+        {
+            _usuarioServiceMock
+                .Setup(u => u.GetByIdAsync(99, It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ServiceResponse<UsuarioDto>.Fail(SiniestroErrorConstants.UsuarioNotFound));
+
+            var result = await _service.CambiarEstadoAsync(1, 2, 99);
+            result.Success.Should().BeFalse();
+            result.Errors.First().Code.Should().Be(SiniestroErrorConstants.UsuarioNotFound.Code);
         }
 
         [Fact]

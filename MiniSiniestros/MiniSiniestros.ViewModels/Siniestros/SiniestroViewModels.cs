@@ -38,6 +38,7 @@ namespace MiniSiniestros.ViewModels.Siniestros
 
         public string EstadoNombre { get; set; } = string.Empty;
         public int SiniestroEstadoId { get; set; }
+        public string? UsuarioNombre { get; set; }
     }
 
     public class SiniestroListViewModel
@@ -57,6 +58,8 @@ namespace MiniSiniestros.ViewModels.Siniestros
         public EmpleadorDto? Empleador { get; set; }
         public TrabajadorDto? Trabajador { get; set; }
         public SiniestroEstadoDto? SiniestroEstado { get; set; }
+        public int? UsuarioId { get; set; }
+        public string? UsuarioNombre { get; set; }
 
         public List<PrestadorDto> Prestadores { get; set; } = new();
         public List<SiniestroEstadoHistorialDto> HistorialEstados { get; set; } = new();
